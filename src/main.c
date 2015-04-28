@@ -13,6 +13,7 @@
 #include "chat.h"
 #include "lcd.h"
 #include "flash.h"
+#include "counter.h"
 
 #define USB_DP_PU_RCC	RCC_APB2Periph_GPIOA
 #define USB_DP_PU_GPIO	GPIOA
@@ -47,6 +48,9 @@ int main(void)
 			  tskIDLE_PRIORITY + 1, NULL );
 
 	err = xTaskCreate(vChatTask, "chat", 256, NULL,
+			  tskIDLE_PRIORITY + 1, NULL );
+
+	err = xTaskCreate(cnt_task, "counter", 512, NULL,
 			  tskIDLE_PRIORITY + 1, NULL );
 
 	vTaskStartScheduler();

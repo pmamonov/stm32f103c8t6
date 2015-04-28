@@ -4,6 +4,7 @@
 #include "strtok.h"
 #include "version.h"
 #include "lcd.h"
+#include "counter.h"
 
 #define PROMPT	"> "
 
@@ -13,6 +14,7 @@ enum {
 	CMD_VER,
 	CMD_DATE,
 	CMD_DISP,
+	CMD_CNT,
 
 	CMD_LAST
 };
@@ -23,6 +25,7 @@ char *cmd_list[CMD_LAST] = {
 	[CMD_VER] =	"ver",
 	[CMD_DATE] =	"date",
 	[CMD_DISP] =	"disp",
+	[CMD_CNT] =	"cnt",
 };
 
 void vChatTask(void *vpars)
@@ -128,6 +131,12 @@ void vChatTask(void *vpars)
 
 			lcd_setstr(l, o, tk);
 
+		} else if (strcmp(tk, cmd_list[CMD_CNT]) == 0) {
+			for (i = 0; i < CNT_NUM; i++) {
+				sniprintf(s, sizeof(s), "%d ", cnt_get(i));
+				cdc_write_buf(&cdc_out, s, strlen(s), 1);
+			}
+			sniprintf(s, sizeof(s), "\r\n");
 		} else
 			sniprintf(s, sizeof(s), "E: try `help`\r\n");
 out:
