@@ -3,6 +3,7 @@
 #include "chat.h"
 #include "strtok.h"
 #include "version.h"
+#include "lcd.h"
 
 #define PROMPT	"> "
 
@@ -30,7 +31,7 @@ void vChatTask(void *vpars)
 		cdc_write_buf(&cdc_out, PROMPT, sizeof(PROMPT), 1);
 		memset(cmd, 0, sizeof(cmd));
 		c = cmd;
-		
+
 		while (1) {
 			i = cdc_read_buf(&cdc_in, c, 1);
 			if (i)
@@ -57,10 +58,44 @@ void vChatTask(void *vpars)
 		tk = _strtok(cmd, " \n\r");
 		if (strcmp(tk, "ver") == 0) {
 			sniprintf(s, sizeof(s), "%s\r\n", __VERSION);
+		} else if (strcmp(tk, "disp") == 0) {
+			int l, o, i;
 
+			tk = _strtok(NULL, " \n\r");
+			if (!tk) {
+				int l;
+				char *s;
+
+				for (l = 0; l < SL; l++) {
+					s = lcd_getstr(l);
+					cdc_write_buf(&cdc_out, s, strlen(s), 1);
+					cdc_write_buf(&cdc_out, "\n\r", 2, 1);
+				}
+				goto out;
+			}
+			l = atoi(tk);
+
+			tk = _strtok(NULL, " \n\r");
+			if (!tk) {
+				sniprintf(s, sizeof(s), "E: no offset\r\n");
+				goto out;
+			}
+			o = atoi(tk);
+
+			tk = _strtok(NULL, "\n\r");
+			if (!tk) {
+				sniprintf(s, sizeof(s), "E: no string\r\n");
+				goto out;
+			}
+
+			for (i = 0; i < strlen(tk); i++)
+				if (tk[i] == '_')
+					tk[i] = ' ';
+
+			lcd_setstr(l, o, tk);
 		} else
-			sniprintf(s, sizeof(s), "E: what?\r\n", 0, 1);
-
+			sniprintf(s, sizeof(s), "E: what?\r\n");
+out:
 		cdc_write_buf(&cdc_out, s, strlen(s), 1);
 	}
 }
