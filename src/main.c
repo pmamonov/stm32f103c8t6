@@ -11,6 +11,7 @@
 #include "blink.h"
 #include "adc.h"
 #include "chat.h"
+#include "lcd.h"
 
 int main(void)
 {
@@ -25,6 +26,9 @@ int main(void)
 			  tskIDLE_PRIORITY + 1, NULL );
 
 	err = xTaskCreate(vChatTask, "chat", 256, NULL,
+			  tskIDLE_PRIORITY + 1, NULL );
+
+	err = xTaskCreate(lcd_task, "lcd", 256, NULL,
 			  tskIDLE_PRIORITY + 1, NULL );
 
 	vTaskStartScheduler();
