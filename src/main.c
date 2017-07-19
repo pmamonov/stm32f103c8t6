@@ -31,6 +31,9 @@ int main(void)
 	err = xTaskCreate(lcd_task, "lcd", 256, NULL,
 			  tskIDLE_PRIORITY + 1, NULL );
 
+	err = xTaskCreate(vADCTask, "adc", 256, NULL,
+			  tskIDLE_PRIORITY + 2, NULL );
+
 	vTaskStartScheduler();
 
 	while(1)

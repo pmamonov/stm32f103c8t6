@@ -1,6 +1,9 @@
+#include <stdio.h>
+#include <string.h>
 #include "FreeRTOS.h"
 #include "task.h"
 #include "adc.h"
+#include "lcd.h"
 
 struct adc_chan {
 	uint32_t	rcc;
@@ -155,12 +158,98 @@ int adc_get_stored(int i)
 	return adc_vals[i];
 };
 
+/* ADC units */
+static unsigned long flow_cal_x[ADC_NCAL] = {620, 2048, 2638,  2948,  3103};
+/* ul / sec */
+static unsigned long flow_cal_y[ADC_NCAL] = {30, 4167, 8333, 12500, 16667};
+
+int adc_cal_save()
+{
+	return 1;
+}
+
+static void adc_cal_load()
+{
+}
+
+int adc_cal_set_xy(int i, unsigned long x, unsigned long y)
+{
+	if (i >= ADC_NCAL)
+		return 1;
+
+	flow_cal_x[i] = x;
+	flow_cal_y[i] = y;
+
+	return 0;
+}
+
+int adc_cal_get_xy(int i, unsigned long *x, unsigned long *y)
+{
+	if (i >= ADC_NCAL)
+		return 1;
+
+	*x = flow_cal_x[i];
+	*y = flow_cal_y[i];
+
+	return 0;
+}
+
+static double adc_to_flow(unsigned long adc)
+{
+	int i;
+	double f;
+
+	if (adc < flow_cal_x[0])
+		return 0;
+
+	for (i = 0; i < ARRAY_SIZE(flow_cal_x) - 1; i++)
+		if (flow_cal_x[i] <= adc && adc <= flow_cal_x[i + 1])
+			break;
+	if (i == ARRAY_SIZE(flow_cal_x) - 1)
+		return 0;
+	f = flow_cal_y[i + 1] - flow_cal_y[i];
+	f = (f * (adc - flow_cal_x[i])) / (flow_cal_x[i + 1] - flow_cal_x[i]);
+	f += flow_cal_y[i];
+	return f * 1e-3; /* ml/s */
+}
+
 void vADCTask(void* vpars)
 {
-	int i, j, ref;
+	unsigned int adc, mv;
+	double f = 0, f0 = 0, v = 0, dt = 1.0 * PERIOD / configTICK_RATE_HZ;
+	char s[21];
+	portTickType lwt, ldt = 0, t;
+
+	adc_init(CHANF);
+	memset(adc_vals, 0, sizeof(adc_vals));
+	adc_cal_load();
+
+	lwt = xTaskGetTickCount();
 
 	while (1) {
-		vTaskDelay(100);
+		vTaskDelayUntil(&lwt, PERIOD);
+		adc = adc_get(CHAN);
+		mv = adc * 3300 / 4096;
+		f0 = f;
+		f = adc_to_flow(adc);
+		v += dt * (f + f0) / 2;
+
+		t = xTaskGetTickCount();
+		if (t < ldt + DPERIOD)
+			continue;
+		ldt = xTaskGetTickCount();
+		sniprintf(s, sizeof(s), "ADC: %4d", adc);
+		lcd_setstr(0, 0, s);
+
+		sniprintf(s, sizeof(s), "V: %3d.%03d", mv / 1000, mv % 1000);
+		lcd_setstr(0, 10, s);
+
+		sniprintf(s, sizeof(s), "ml/m: %3d", (long)(f * 60));
+		lcd_setstr(1, 0, s);
+
+		sniprintf(s, sizeof(s), "ml:%5d.%01d",
+					(long)v, (long)(v * 10) % 10);
+		lcd_setstr(1, 10, s);
 	}
 }
 
