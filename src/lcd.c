@@ -41,7 +41,7 @@ void lcd_task(void *vpars)
 	LCDI2C_clear();
 
 	for (l = 0; l < SL; l++)
-		lcd_setstr(l, 0, "01234567890123456789");
+		lcd_setstr(l, 0, "                    ");
 
 	while (1) {
 		if (!update) {
