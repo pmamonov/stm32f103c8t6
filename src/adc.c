@@ -102,8 +102,8 @@ void adc_init(int chans)
 	GPIO_InitTypeDef sGPIOinit;
 	ADC_InitTypeDef sADCinit;
 
-	/* set  adc clock to 48/4=12MHz */
-	RCC_ADCCLKConfig(RCC_PCLK2_Div4);
+	/* set  adc clock to 72/6=12MHz */
+	RCC_ADCCLKConfig(RCC_PCLK2_Div6);
 
 	/* enable  ADC and input GPIOs clock */
 	tmp = RCC_APB2Periph_ADC1;

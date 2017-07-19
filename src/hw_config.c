@@ -123,7 +123,7 @@ void Set_USBClock(void)
   
 #else 
   /* Select USBCLK source */
-  RCC_USBCLKConfig(RCC_USBCLKSource_PLLCLK_Div1);
+  RCC_USBCLKConfig(RCC_USBCLKSource_PLLCLK_1Div5);
   
   /* Enable the USB clock */
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_USB, ENABLE);
