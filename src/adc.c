@@ -4,6 +4,7 @@
 #include "task.h"
 #include "adc.h"
 #include "lcd.h"
+#include "flash.h"
 
 struct adc_chan {
 	uint32_t	rcc;
@@ -165,11 +166,18 @@ static unsigned long flow_cal_y[ADC_NCAL] = {30, 4167, 8333, 12500, 16667};
 
 int adc_cal_save()
 {
-	return 1;
+	memcpy(app_flash.adc_cal.flow_cal_x, flow_cal_x, sizeof(flow_cal_x));
+	memcpy(app_flash.adc_cal.flow_cal_y, flow_cal_y, sizeof(flow_cal_y));
+
+	flash_save();
 }
 
 static void adc_cal_load()
 {
+	if (!flash_is_valid())
+		return;
+	memcpy(flow_cal_x, app_flash.adc_cal.flow_cal_x, sizeof(flow_cal_x));
+	memcpy(flow_cal_y, app_flash.adc_cal.flow_cal_y, sizeof(flow_cal_y));
 }
 
 int adc_cal_set_xy(int i, unsigned long x, unsigned long y)
