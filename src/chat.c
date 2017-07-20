@@ -4,6 +4,7 @@
 #include "strtok.h"
 #include "version.h"
 #include "lcd.h"
+#include "adc.h"
 
 #define PROMPT	"> "
 
@@ -93,6 +94,37 @@ void vChatTask(void *vpars)
 					tk[i] = ' ';
 
 			lcd_setstr(l, o, tk);
+		} else if (strcmp(tk, "adc_cal") == 0) {
+			unsigned long i, x, y;
+
+			tk = _strtok(NULL, " \n\r");
+			if (!tk) {
+				sniprintf(s, sizeof(s), "E: no index\r\n");
+				goto out;
+			}
+			i = atoi(tk);
+
+			tk = _strtok(NULL, " \n\r");
+			if (!tk) { /* dump current values */
+				adc_cal_get_xy(i, &x, &y);
+				sniprintf(s, sizeof(s), "%d %d\r\n", x, y);
+				goto out;
+			}
+			x = atoi(tk);
+
+			tk = _strtok(NULL, " \n\r");
+			if (!tk) {
+				sniprintf(s, sizeof(s), "E: no Y\r\n");
+				goto out;
+			}
+			y = atoi(tk);
+
+			if (adc_cal_set_xy(i, x, y))
+				sniprintf(s, sizeof(s), "E: fail\r\n");
+
+		} else if (strcmp(tk, "adc_cal_save") == 0) {
+			if (adc_cal_save())
+				sniprintf(s, sizeof(s), "E: fail\r\n");
 		} else
 			sniprintf(s, sizeof(s), "E: what?\r\n");
 out:
