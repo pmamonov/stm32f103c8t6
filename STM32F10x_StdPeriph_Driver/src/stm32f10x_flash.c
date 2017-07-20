@@ -28,6 +28,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_flash.h"
 
+#define FLASH_KEY1	0x45670123
+#define FLASH_KEY2	0xCDEF89AB
+#define RDP_Key		0x00A5
+
 /** @addtogroup STM32F10x_StdPeriph_Driver
   * @{
   */
