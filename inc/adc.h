@@ -11,7 +11,7 @@
 #define CHAN	8
 #define CHANF	(1 << CHAN)
 #define PERIOD	100
-#define DPERIOD	500
+#define DPERIOD	200
 #define ADC_NCAL	10
 
 void adc_init(int);
