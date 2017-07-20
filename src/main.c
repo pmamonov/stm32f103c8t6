@@ -12,6 +12,7 @@
 #include "adc.h"
 #include "chat.h"
 #include "lcd.h"
+#include "flash.h"
 
 int main(void)
 {
@@ -21,6 +22,8 @@ int main(void)
 	Set_USBClock();
 	USB_Interrupts_Config();
 	USB_Init();
+
+	flash_load();
 
 	err = xTaskCreate(vBlinkTask, "blink", 64, NULL,
 			  tskIDLE_PRIORITY + 1, NULL );
