@@ -94,7 +94,7 @@ void vChatTask(void *vpars)
 					tk[i] = ' ';
 
 			lcd_setstr(l, o, tk);
-		} else if (strcmp(tk, "adc_cal") == 0) {
+		} else if (strcmp(tk, "cal") == 0) {
 			unsigned long i, x, y;
 
 			tk = _strtok(NULL, " \n\r");
@@ -122,7 +122,7 @@ void vChatTask(void *vpars)
 			if (adc_cal_set_xy(i, x, y))
 				sniprintf(s, sizeof(s), "E: fail\r\n");
 
-		} else if (strcmp(tk, "adc_cal_save") == 0) {
+		} else if (strcmp(tk, "cal_save") == 0) {
 			if (adc_cal_save())
 				sniprintf(s, sizeof(s), "E: fail\r\n");
 		} else

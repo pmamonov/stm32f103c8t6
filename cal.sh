@@ -4,7 +4,7 @@ TTY='/dev/ttyACM0'
 
 function adc_cal()
 {
-	printf 'adc_cal %d %d %d\r' $1 $2 $3 > $TTY
+	printf 'cal %d %d %d\r' $1 $2 $3 > $TTY
 	sleep 0.1
 }
 
@@ -19,4 +19,4 @@ adc_cal 7 0 0
 adc_cal 8 0 0
 adc_cal 9 0 0
 
-# printf 'adc_cal_save\r' > $TTY
+# printf 'cal_save\r' > $TTY
