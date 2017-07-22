@@ -8,11 +8,11 @@ function adc_cal()
 	sleep 0.1
 }
 
-adc_cal 0 620 30
-adc_cal 1 2048 4167
-adc_cal 2 2638 8333
-adc_cal 3 2948 12500
-adc_cal 4 3103 16667
+adc_cal 0 620 0
+adc_cal 1 1974 4375
+adc_cal 2 2595 9166
+adc_cal 3 2855 13750
+adc_cal 4 3091 18333
 adc_cal 5 0 0
 adc_cal 6 0 0
 adc_cal 7 0 0
