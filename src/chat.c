@@ -10,6 +10,7 @@
 enum {
 	CMD_HELP = 0,
 	CMD_VER,
+	CMD_DATE,
 	CMD_DISP,
 	CMD_LAST
 };
@@ -17,6 +18,7 @@ enum {
 char *cmd_list[CMD_LAST] = {
 	"help",
 	"ver",
+	"date",
 	"disp",
 };
 
@@ -68,6 +70,9 @@ void vChatTask(void *vpars)
 			for (i = 0; i < CMD_LAST; i++)
 				_s += sniprintf(_s, sizeof(s) - strlen(s),
 						"%s\r\n", cmd_list[i]);
+
+		} else if (strcmp(tk, cmd_list[CMD_DATE]) == 0) {
+			sniprintf(s, sizeof(s), "%d\r\n", xTaskGetTickCount());
 
 		} else if (strcmp(tk, cmd_list[CMD_DISP]) == 0) {
 			int l, o, i;
