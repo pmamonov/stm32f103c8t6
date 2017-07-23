@@ -7,6 +7,19 @@
 
 #define PROMPT	"> "
 
+enum {
+	CMD_HELP = 0,
+	CMD_VER,
+	CMD_DISP,
+	CMD_LAST
+};
+
+char *cmd_list[CMD_LAST] = {
+	"help",
+	"ver",
+	"disp",
+};
+
 void status_err()
 {
 //  cdc_write_buf(&cdc_out, "\nERR\n", 5);
@@ -56,9 +69,19 @@ void vChatTask(void *vpars)
 
 		sniprintf(s, sizeof(s), "OK\r\n");
 		tk = _strtok(cmd, " \n\r");
-		if (strcmp(tk, "ver") == 0) {
+
+		if (strcmp(tk, cmd_list[CMD_VER]) == 0) {
 			sniprintf(s, sizeof(s), "%s\r\n", __VERSION);
-		} else if (strcmp(tk, "disp") == 0) {
+
+		} else if (strcmp(tk, cmd_list[CMD_HELP]) == 0) {
+			int i;
+			char *_s = s;
+
+			for (i = 0; i < CMD_LAST; i++)
+				_s += sniprintf(_s, sizeof(s) - strlen(s),
+						"%s\r\n", cmd_list[i]);
+
+		} else if (strcmp(tk, cmd_list[CMD_DISP]) == 0) {
 			int l, o, i;
 
 			tk = _strtok(NULL, " \n\r");
@@ -93,6 +116,7 @@ void vChatTask(void *vpars)
 					tk[i] = ' ';
 
 			lcd_setstr(l, o, tk);
+
 		} else
 			sniprintf(s, sizeof(s), "E: what?\r\n");
 out:
