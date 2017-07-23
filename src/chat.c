@@ -8,18 +8,6 @@
 
 #define PROMPT	"> "
 
-void status_err()
-{
-//  cdc_write_buf(&cdc_out, "\nERR\n", 5);
-	return;
-}
-
-void status_ok()
-{
-//  cdc_write_buf(&cdc_out, "\nOK\n", 4);
-	return;
-}
-
 void vChatTask(void *vpars)
 {
 	char s[64];
