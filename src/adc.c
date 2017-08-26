@@ -252,7 +252,7 @@ void vADCTask(void* vpars)
 		sniprintf(s, sizeof(s), "V: %3d.%03d", mv / 1000, mv % 1000);
 		lcd_setstr(0, 10, s);
 
-		sniprintf(s, sizeof(s), "ml/m: %3d", (long)(f * 60));
+		sniprintf(s, sizeof(s), "ml/m:%4d", (long)(f * 60));
 		lcd_setstr(1, 0, s);
 
 		sniprintf(s, sizeof(s), "ml:%5d.%01d",
