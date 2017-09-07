@@ -160,9 +160,9 @@ int adc_get_stored(int i)
 };
 
 /* ADC units */
-static unsigned long flow_cal_x[ADC_NCAL] = {620, 2048, 2638,  2948,  3103};
+static unsigned long flow_cal_x[ADC_NCAL] = {620, 1974, 2595, 2855, 3091};
 /* ul / sec */
-static unsigned long flow_cal_y[ADC_NCAL] = {30, 4167, 8333, 12500, 16667};
+static unsigned long flow_cal_y[ADC_NCAL] = {0, 4375, 9166, 13750, 18333};
 
 int adc_cal_save()
 {
