@@ -10,3 +10,8 @@
 | PCF8574 / VCC		| 5V			|
 | PCF8574 / SCL		| B6 (I2C1_SCL)		|
 | PCF8574 / SDA		| B7 (I2C1_SDA)		|
+|.......................|.......................|
+| MH-Z19 / GND		| GND			|
+| MH-Z19 / Vin		| 5V			|
+| MH-Z19 / TX		| PA10 / USART1_RX	|
+| MH-Z19 / RX		| PA9 / USART1_TX	|

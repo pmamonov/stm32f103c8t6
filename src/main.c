@@ -13,6 +13,7 @@
 #include "chat.h"
 #include "lcd.h"
 #include "flash.h"
+#include "co2.h"
 
 int main(void)
 {
@@ -36,6 +37,9 @@ int main(void)
 
 	err = xTaskCreate(vADCTask, "adc", 256, NULL,
 			  tskIDLE_PRIORITY + 2, NULL );
+
+	err = xTaskCreate(co2_task, "co2", 256, NULL,
+			  tskIDLE_PRIORITY + 1, NULL );
 
 	vTaskStartScheduler();
 
