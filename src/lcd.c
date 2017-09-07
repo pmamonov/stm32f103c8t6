@@ -36,12 +36,12 @@ void lcd_task(void *vpars)
 {
 	int l;
 
+	for (l = 0; l < SL; l++)
+		lcd_setstr(l, 0, "                    ");
+
 	LCDI2C_init(PCF8574_ADDR, SC, SL);
 	LCDI2C_backlight();
 	LCDI2C_clear();
-
-	for (l = 0; l < SL; l++)
-		lcd_setstr(l, 0, "                    ");
 
 	while (1) {
 		if (!update) {
