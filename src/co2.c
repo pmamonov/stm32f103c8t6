@@ -33,7 +33,8 @@ static int co2_cmd(char *cmd, char *reply)
 	int i;
 	portTickType timeout = xTaskGetTickCount() + 1000;
 
-	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == SET)
+	while (USART_GetFlagStatus(USART1, USART_FLAG_RXNE) == SET ||
+	       USART_GetFlagStatus(USART1, USART_FLAG_ORE) == SET)
 		USART_ReceiveData(USART1);
 
 	for (i = 0; i < CMD_LEN; i++) {
