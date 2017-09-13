@@ -4,7 +4,7 @@
 #include "stm32f10x_flash.h"
 #include "adc.h"
 
-#define APP_FLASH	(0x08000000 + (127 << 10))
+#define APP_FLASH	(0x08000000 + (63 << 10))
 
 struct adc_cal_flash {
 	unsigned long	flow_cal_x[ADC_NCAL];
