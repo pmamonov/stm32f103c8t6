@@ -18,8 +18,9 @@ void adc_init(int);
 int adc_get(int);
 int adc_get_stored(int);
 void vADCTask(void* vpars);
-int adc_cal_set_xy(int, unsigned long, unsigned long);
-int adc_cal_get_xy(int, unsigned long *, unsigned long *);
+int adc_cal_set_xy(int, int, unsigned long, unsigned long);
+int adc_cal_get_xy(int, int, unsigned long *, unsigned long *);
 int adc_cal_save();
+void adc_set_flow_type(int);
 
 #endif /* __ADC_H__ */

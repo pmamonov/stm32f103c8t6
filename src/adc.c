@@ -99,6 +99,13 @@ int adc_vals[ARRAY_SIZE(chan_list)];
 
 xSemaphoreHandle adc_vals_lock = NULL;
 
+static volatile int flow_type;
+
+void adc_set_flow_type(int t)
+{
+	flow_type = t;
+}
+
 void adc_init(int chans)
 {
 	int i;
@@ -163,11 +170,17 @@ int adc_get_stored(int i)
 static unsigned long flow_cal_x[ADC_NCAL] = {620, 1974, 2595, 2855, 3091};
 /* ul / sec */
 static unsigned long flow_cal_y[ADC_NCAL] = {0, 4375, 9166, 13750, 18333};
+/* ADC units */
+static unsigned long xflow_cal_x[ADC_NCAL] = {620, 1974, 2595, 2855, 3091};
+/* ul / sec */
+static unsigned long xflow_cal_y[ADC_NCAL] = {0, 4375, 9166, 13750, 18333};
 
 int adc_cal_save()
 {
 	memcpy(app_flash.adc_cal.flow_cal_x, flow_cal_x, sizeof(flow_cal_x));
 	memcpy(app_flash.adc_cal.flow_cal_y, flow_cal_y, sizeof(flow_cal_y));
+	memcpy(app_flash.adc_cal.xflow_cal_x, xflow_cal_x, sizeof(xflow_cal_x));
+	memcpy(app_flash.adc_cal.xflow_cal_y, xflow_cal_y, sizeof(xflow_cal_y));
 
 	flash_save();
 }
@@ -178,53 +191,72 @@ static void adc_cal_load()
 		return;
 	memcpy(flow_cal_x, app_flash.adc_cal.flow_cal_x, sizeof(flow_cal_x));
 	memcpy(flow_cal_y, app_flash.adc_cal.flow_cal_y, sizeof(flow_cal_y));
+	memcpy(xflow_cal_x, app_flash.adc_cal.xflow_cal_x, sizeof(xflow_cal_x));
+	memcpy(xflow_cal_y, app_flash.adc_cal.xflow_cal_y, sizeof(xflow_cal_y));
 }
 
-int adc_cal_set_xy(int i, unsigned long x, unsigned long y)
+static void get_fcxy(int ft, unsigned long **fcx, unsigned long **fcy)
 {
+	*fcx = ft ? xflow_cal_x : flow_cal_x;
+	*fcy = ft ? xflow_cal_y : flow_cal_y;
+}
+
+int adc_cal_set_xy(int ft, int i, unsigned long x, unsigned long y)
+{
+	unsigned long *fcx, *fcy;
+
+	get_fcxy(ft, &fcx, &fcy);
+
 	if (i >= ADC_NCAL)
 		return 1;
 
-	flow_cal_x[i] = x;
-	flow_cal_y[i] = y;
+	fcx[i] = x;
+	fcy[i] = y;
 
 	return 0;
 }
 
-int adc_cal_get_xy(int i, unsigned long *x, unsigned long *y)
+int adc_cal_get_xy(int ft, int i, unsigned long *x, unsigned long *y)
 {
+	unsigned long *fcx, *fcy;
+
+	get_fcxy(ft, &fcx, &fcy);
+
 	if (i >= ADC_NCAL)
 		return 1;
 
-	*x = flow_cal_x[i];
-	*y = flow_cal_y[i];
+	*x = fcx[i];
+	*y = fcy[i];
 
 	return 0;
 }
 
-static double adc_to_flow(unsigned long adc)
+static double adc_to_flow(unsigned long adc, int ft)
 {
 	int i;
 	double f;
+	unsigned long *fcx, *fcy;
 
-	if (adc < flow_cal_x[0])
+	get_fcxy(ft, &fcx, &fcy);
+
+	if (adc < fcx[0])
 		return 0;
 
 	for (i = 0; i < ARRAY_SIZE(flow_cal_x) - 1; i++)
-		if (flow_cal_x[i] <= adc && adc <= flow_cal_x[i + 1])
+		if (fcx[i] <= adc && adc <= fcx[i + 1])
 			break;
 	if (i == ARRAY_SIZE(flow_cal_x) - 1)
 		return 0;
-	f = flow_cal_y[i + 1] - flow_cal_y[i];
-	f = (f * (adc - flow_cal_x[i])) / (flow_cal_x[i + 1] - flow_cal_x[i]);
-	f += flow_cal_y[i];
+	f = fcy[i + 1] - fcy[i];
+	f = (f * (adc - fcx[i])) / (fcx[i + 1] - fcx[i]);
+	f += fcy[i];
 	return f * 1e-3; /* ml/s */
 }
 
 void vADCTask(void* vpars)
 {
 	unsigned int adc, mv;
-	double f = 0, f0 = 0, v = 0, dt = 1.0 * PERIOD / configTICK_RATE_HZ;
+	double f = 0, f0 = 0, v = 0, xv = 0, dt = 1.0 * PERIOD / configTICK_RATE_HZ;
 	char s[21];
 	portTickType lwt, ldt = 0, t;
 
@@ -235,12 +267,17 @@ void vADCTask(void* vpars)
 	lwt = xTaskGetTickCount();
 
 	while (1) {
+		int ft = flow_type;
+
 		vTaskDelayUntil(&lwt, PERIOD);
 		adc = adc_get(CHAN);
 		mv = adc * 3300 / 4096;
 		f0 = f;
-		f = adc_to_flow(adc);
-		v += dt * (f + f0) / 2;
+		f = adc_to_flow(adc, ft);
+		if (ft)
+			xv += dt * (f + f0) / 2;
+		else
+			v += dt * (f + f0) / 2;
 
 		t = xTaskGetTickCount();
 		if (t < ldt + DPERIOD)
@@ -251,7 +288,7 @@ void vADCTask(void* vpars)
 		lcd_setstr(0, 0, s);
 
 		sniprintf(s, sizeof(s), "XEN/AIR:%4d/%4d ml",
-					(long)v, (long)v); /* FIXME */
+					(long)xv, (long)v);
 		lcd_setstr(1, 0, s);
 	}
 }

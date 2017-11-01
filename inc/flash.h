@@ -9,6 +9,8 @@
 struct adc_cal_flash {
 	unsigned long	flow_cal_x[ADC_NCAL];
 	unsigned long	flow_cal_y[ADC_NCAL];
+	unsigned long	xflow_cal_x[ADC_NCAL];
+	unsigned long	xflow_cal_y[ADC_NCAL];
 };
 
 struct app_flash_s {
