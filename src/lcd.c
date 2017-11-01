@@ -39,6 +39,9 @@ void lcd_task(void *vpars)
 	for (l = 0; l < SL; l++)
 		lcd_setstr(l, 0, "                    ");
 
+	lcd_setstr(3, 0, "T: 25C  H2O: 234 pm");
+	lcd_setstr(2, 13, "P: 25mB");
+
 	LCDI2C_init(PCF8574_ADDR, SC, SL);
 	LCDI2C_backlight();
 	LCDI2C_clear();
