@@ -97,11 +97,11 @@ void co2_task(void *vpars)
 		char s[21];
 
 		if (co2_cmd(cmd_read, reply)) {
-			lcd_setstr(CO2_LINE, CO2_COL, "CO2:   N/A");
+			lcd_setstr(CO2_LINE, CO2_COL, "CO2:  N/A   ");
 			continue;
 		}
 		val = ((int)reply[2] << 8) | reply[3];
-		sniprintf(s, sizeof(s), "CO2:%6d", val);
+		sniprintf(s, sizeof(s), "CO2: %4dppm", val);
 		lcd_setstr(CO2_LINE, CO2_COL, s);
 
 #if 0
