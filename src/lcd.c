@@ -45,7 +45,7 @@ void lcd_task(void *vpars)
 
 	while (1) {
 		if (!update) {
-			vTaskDelay(10);
+			vTaskDelay(200);
 			continue;
 		}
 
