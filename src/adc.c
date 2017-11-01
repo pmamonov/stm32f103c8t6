@@ -246,18 +246,13 @@ void vADCTask(void* vpars)
 		if (t < ldt + DPERIOD)
 			continue;
 		ldt = xTaskGetTickCount();
-		sniprintf(s, sizeof(s), "ADC: %4d", adc);
+
+		sniprintf(s, sizeof(s), "FLOW: %4d ml/min", (long)(f * 60));
 		lcd_setstr(0, 0, s);
 
-		sniprintf(s, sizeof(s), "V: %3d.%03d", mv / 1000, mv % 1000);
-		lcd_setstr(0, 10, s);
-
-		sniprintf(s, sizeof(s), "ml/m:%4d", (long)(f * 60));
+		sniprintf(s, sizeof(s), "XEN/AIR:%4d/%4d ml",
+					(long)v, (long)v); /* FIXME */
 		lcd_setstr(1, 0, s);
-
-		sniprintf(s, sizeof(s), "ml:%5d.%01d",
-					(long)v, (long)(v * 10) % 10);
-		lcd_setstr(1, 10, s);
 	}
 }
 
