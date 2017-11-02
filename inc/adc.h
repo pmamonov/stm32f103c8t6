@@ -14,6 +14,12 @@
 #define DPERIOD	200
 #define ADC_NCAL	10
 
+enum flow {
+	FLOW_AIR = 0,
+	FLOW_XEN,
+	FLOW_RESET,
+};
+
 void adc_init(int);
 int adc_get(int);
 int adc_get_stored(int);
@@ -21,6 +27,6 @@ void vADCTask(void* vpars);
 int adc_cal_set_xy(int, int, unsigned long, unsigned long);
 int adc_cal_get_xy(int, int, unsigned long *, unsigned long *);
 int adc_cal_save();
-void adc_set_flow_type(int);
+void adc_set_flow_type(enum flow);
 
 #endif /* __ADC_H__ */

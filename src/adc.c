@@ -99,11 +99,11 @@ int adc_vals[ARRAY_SIZE(chan_list)];
 
 xSemaphoreHandle adc_vals_lock = NULL;
 
-static volatile int flow_type;
+static volatile enum flow flow_type;
 
-void adc_set_flow_type(int t)
+void adc_set_flow_type(enum flow ft)
 {
-	flow_type = t;
+	flow_type = ft;
 }
 
 void adc_init(int chans)
@@ -267,17 +267,27 @@ void vADCTask(void* vpars)
 	lwt = xTaskGetTickCount();
 
 	while (1) {
-		int ft = flow_type;
+		enum flow ft = flow_type;
 
 		vTaskDelayUntil(&lwt, PERIOD);
 		adc = adc_get(CHAN);
 		mv = adc * 3300 / 4096;
 		f0 = f;
-		f = adc_to_flow(adc, ft);
-		if (ft)
-			xv += dt * (f + f0) / 2;
-		else
+		switch (ft) {
+		case FLOW_AIR:
+			f = adc_to_flow(adc, 0);
 			v += dt * (f + f0) / 2;
+			break;
+		case FLOW_XEN:
+			f = adc_to_flow(adc, 1);
+			xv += dt * (f + f0) / 2;
+			break;
+		case FLOW_RESET:
+			f = v = xv = 0;
+			break;
+		default:
+			break;
+		}
 
 		t = xTaskGetTickCount();
 		if (t < ldt + DPERIOD)
