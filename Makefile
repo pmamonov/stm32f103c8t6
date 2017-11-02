@@ -23,6 +23,7 @@ CFLAGS = -mcpu=cortex-m3 -mthumb -Os -g\
 #src/startup_stm32f10x_md.o\
 
 OBJ = src/startup_stm32f10x_md.o \
+  src/io.o \
   src/co2.o \
   src/blink.o \
   src/adc.o \

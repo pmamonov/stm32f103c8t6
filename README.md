@@ -15,7 +15,18 @@
 | MH-Z19 / Vin		| 5V			|
 | MH-Z19 / TX		| PA10 / USART1_RX	|
 | MH-Z19 / RX		| PA9 / USART1_TX	|
-
+|.......................|.......................|
+| BUT_IN		| PA0			|
+| BUT_CIRC		| PA1			|
+| MODE_XIN		| PA2			|
+| MODE_AIN		| PA3			|
+| MODE_CIRC		| PA4			|
+| MODE_VENT		| PA5			|
+|.......................|.......................|
+| VALVE_IN		| PB12			|
+| PUMP_IN		| PB13			|
+| VALVE_CIRC		| PB14			|
+| PUMP_CIRC		| PB15			|
 
 # Датчики: 
 

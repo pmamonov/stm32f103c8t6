@@ -14,6 +14,7 @@
 #include "lcd.h"
 #include "flash.h"
 #include "co2.h"
+#include "io.h"
 
 int main(void)
 {
@@ -39,6 +40,9 @@ int main(void)
 			  tskIDLE_PRIORITY + 2, NULL );
 
 	err = xTaskCreate(co2_task, "co2", 256, NULL,
+			  tskIDLE_PRIORITY + 1, NULL );
+
+	err = xTaskCreate(io_task, "io", 256, NULL,
 			  tskIDLE_PRIORITY + 1, NULL );
 
 	vTaskStartScheduler();
