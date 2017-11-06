@@ -167,13 +167,13 @@ int adc_get_stored(int i)
 };
 
 /* ADC units */
-static unsigned long flow_cal_x[ADC_NCAL] = {620, 1974, 2595, 2855, 3091};
+static unsigned long flow_cal_x[ADC_NCAL] = {620, 1974, 2595, 2855, 3091, 4000};
 /* ul / sec */
-static unsigned long flow_cal_y[ADC_NCAL] = {0, 4375, 9166, 13750, 18333};
+static unsigned long flow_cal_y[ADC_NCAL] = {0, 4375, 9166, 13750, 18333, 18333};
 /* ADC units */
-static unsigned long xflow_cal_x[ADC_NCAL] = {620, 1974, 2595, 2855, 3091};
+static unsigned long xflow_cal_x[ADC_NCAL] = {620, 1974, 2595, 2855, 3091, 4000};
 /* ul / sec */
-static unsigned long xflow_cal_y[ADC_NCAL] = {0, 4375, 9166, 13750, 18333};
+static unsigned long xflow_cal_y[ADC_NCAL] = {0, 3281, 6874, 10312, 13749, 13749};
 
 int adc_cal_save()
 {
