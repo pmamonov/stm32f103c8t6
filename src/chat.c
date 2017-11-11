@@ -17,7 +17,7 @@ void vChatTask(void *vpars)
 	int i = 0;
 
 	while (1) {
-		cdc_write_buf(&cdc_out, PROMPT, sizeof(PROMPT), 1);
+		cdc_write_buf(&cdc_out, PROMPT, sizeof(PROMPT) - 1, 1);
 		memset(cmd, 0, sizeof(cmd));
 		c = cmd;
 
