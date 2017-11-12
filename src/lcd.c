@@ -45,11 +45,11 @@ void lcd_dump()
 {
 	int l;
 
-	cdc_write_buf(&cdc_out, "\n\r", 2, 1);
+	cdc_write_buf(&cdc_out, "\n\r", 2, 0);
 	for (l = 0; l < SL; l++) {
 		char *s = lcd_getstr(l);
-		cdc_write_buf(&cdc_out, s, strlen(s), 1);
-		cdc_write_buf(&cdc_out, "\n\r", 2, 1);
+		cdc_write_buf(&cdc_out, s, strlen(s), 0);
+		cdc_write_buf(&cdc_out, "\n\r", 2, 0);
 	}
 }
 
