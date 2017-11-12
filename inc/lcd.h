@@ -9,5 +9,6 @@
 void lcd_task(void *vpars);
 void lcd_setstr(int, int, char *);
 char *lcd_getstr(int);
+void lcd_dump_toggle();
 
 #endif /* __LCD_H__*/

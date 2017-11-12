@@ -47,6 +47,8 @@ void vChatTask(void *vpars)
 		tk = _strtok(cmd, " \n\r");
 		if (strcmp(tk, "ver") == 0) {
 			sniprintf(s, sizeof(s), "%s\r\n", __VERSION);
+		} else if (strcmp(tk, "ddisp") == 0) {
+			lcd_dump_toggle();
 		} else if (strcmp(tk, "disp") == 0) {
 			int l, o, i;
 

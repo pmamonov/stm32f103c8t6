@@ -9,6 +9,7 @@
 
 static char buf[SL * (SC + 1)];
 static volatile int update;
+static volatile int dump;
 
 char *lcd_getstr(int l)
 {
@@ -52,18 +53,24 @@ void lcd_dump()
 	}
 }
 
+void lcd_dump_toggle()
+{
+	dump = !dump;
+}
+
 void lcd_task(void *vpars)
 {
 	int l;
 	int i;
 
+	dump = 1;
 	for (l = 0; l < SL; l++)
 		lcd_setstr(l, 0, "                    ");
 
 	lcd_init();
 
 	while (1) {
-		if (!i)
+		if (dump && !i)
 			lcd_dump();
 		i = (i + 1) % 5;
 		if (!update) {
