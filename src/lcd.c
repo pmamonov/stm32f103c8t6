@@ -32,13 +32,18 @@ void lcd_setstr(int l, int off, char *s)
 	update |= 1 << l;
 }
 
+static void lcd_init()
+{
+	LCDI2C_init(PCF8574_ADDR, SC, SL);
+	LCDI2C_backlight();
+	LCDI2C_clear();
+}
+
 void lcd_task(void *vpars)
 {
 	int l;
 
-	LCDI2C_init(PCF8574_ADDR, SC, SL);
-	LCDI2C_backlight();
-	LCDI2C_clear();
+	lcd_init();
 
 	for (l = 0; l < SL; l++)
 		lcd_setstr(l, 0, "01234567890123456789");
