@@ -57,7 +57,8 @@ static void io_init()
 			     MODE_CIRC_PIN | MODE_VENT_PIN;
 	GPIO_Init(GPIO_BUT_MODE, &gpio_init);
 
-	/* valves and */
+	/* valves and pumps */
+	RCC_APB2PeriphClockCmd(RCC_VALVE_PUMP, ENABLE);
 	gpio_init.GPIO_Mode = GPIO_Mode_Out_PP;
 	gpio_init.GPIO_Pin = VALVE_IN_PIN | VALVE_CIRC_PIN | 
 			     PUMP_IN_PIN | PUMP_CIRC_PIN;
