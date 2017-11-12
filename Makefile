@@ -89,6 +89,9 @@ CM3/CoreSupport/core_cm3.o: CM3/CoreSupport/core_cm3.c
 load: main.bin
 	openocd -f fwload.openocd
 
+reset:
+	openocd -f stm32f103c8t6-devboard.cfg  -c "init; reset run; shutdown"
+
 inc/version.h:
 	sh -c 'echo "#define __VERSION \"$$(./setlocalversion)\""' > inc/version.h
 
