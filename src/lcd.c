@@ -3,6 +3,7 @@
 #include "task.h"
 #include "LiquidCrystal_I2C.h"
 #include "lcd.h"
+#include "cdcio.h"
 
 #define min(a, b)	((a) < (b) ? (a) : (b))
 
@@ -39,9 +40,22 @@ static void lcd_init()
 	LCDI2C_clear();
 }
 
+void lcd_dump()
+{
+	int l;
+
+	cdc_write_buf(&cdc_out, "\n\r", 2, 1);
+	for (l = 0; l < SL; l++) {
+		char *s = lcd_getstr(l);
+		cdc_write_buf(&cdc_out, s, strlen(s), 1);
+		cdc_write_buf(&cdc_out, "\n\r", 2, 1);
+	}
+}
+
 void lcd_task(void *vpars)
 {
 	int l;
+	int i;
 
 	for (l = 0; l < SL; l++)
 		lcd_setstr(l, 0, "                    ");
@@ -49,6 +63,9 @@ void lcd_task(void *vpars)
 	lcd_init();
 
 	while (1) {
+		if (!i)
+			lcd_dump();
+		i = (i + 1) % 5;
 		if (!update) {
 			vTaskDelay(200);
 			continue;
