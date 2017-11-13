@@ -83,7 +83,10 @@ CM3/CoreSupport/core_cm3.o: CM3/CoreSupport/core_cm3.c
 	$(CC) $(CFLAGS) -O0 -c -o $@ $<
 
 load: main.bin
-	openocd -f fwload.openocd
+	openocd -f stm32f103c8t6-devboard.cfg -f fwload.openocd
+
+load_stlink: main.bin
+	openocd -f stm32f103c8t6-stlink.cfg -f fwload.openocd
 
 inc/version.h:
 	sh -c 'echo "#define __VERSION \"$$(./setlocalversion)\""' > inc/version.h
