@@ -1,4 +1,3 @@
-source stm32f103c8t6-devboard.cfg
 init
 reset init
 
