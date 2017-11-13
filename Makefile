@@ -1,7 +1,6 @@
 PREFIX=arm-none-eabi
 AS      = $(PREFIX)-as
 CC      = $(PREFIX)-gcc
-CXX     = $(PREFIX)-g++
 LD      = $(PREFIX)-ld
 OBJCOPY = $(PREFIX)-objcopy
 
@@ -73,7 +72,7 @@ main.bin: main.elf
 	$(PREFIX)-size $<
 
 main.elf: $(OBJ)
-	$(CXX) $(CFLAGS) -o $@ -nostartfiles  -Wl,-T$(LDSCRIPT)  $^
+	$(CC) $(CFLAGS) -o $@ -nostartfiles  -Wl,-T$(LDSCRIPT)  $^
 #	$(CC) -o $@ -nostartfiles -Wl,-T$(LDSCRIPT) $^
 
 clean:
