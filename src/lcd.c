@@ -34,11 +34,18 @@ void lcd_setstr(int l, int off, char *s)
 	update |= 1 << l;
 }
 
-static void lcd_init()
+static int lcd_init()
 {
-	LCDI2C_init(PCF8574_ADDR, SC, SL);
-	LCDI2C_backlight();
-	LCDI2C_clear();
+	int ret;
+
+	ret = LCDI2C_init(PCF8574_ADDR, SC, SL);
+	if (ret)
+		return ret;
+	ret = LCDI2C_backlight();
+	if (ret)
+		return ret;
+	ret = LCDI2C_clear();
+	return ret;
 }
 
 void lcd_dump()
@@ -58,31 +65,69 @@ void lcd_dump_toggle()
 	dump = !dump;
 }
 
+static void lcd_err_log(int err, int block)
+{
+	cdc_write_buf(&cdc_out, "LCD: ", 5, block);
+	switch (err) {
+	case EBUSY:
+		cdc_write_buf(&cdc_out, "EBUSY", 5, block);
+		break;
+	case EMASTER:
+		cdc_write_buf(&cdc_out, "EMASTER", 7, block);
+		break;
+	case ETRANS:
+		cdc_write_buf(&cdc_out, "ETRANS", 6, block);
+		break;
+	case ERECV:
+		cdc_write_buf(&cdc_out, "ERECV", 5, block);
+		break;
+	case EMBTRANS:
+		cdc_write_buf(&cdc_out, "EMBTRANS", 8, block);
+		break;
+	default:
+		cdc_write_buf(&cdc_out, "UNKNOWN", 7, block);
+		break;
+	}
+	cdc_write_buf(&cdc_out, "\n\r", 2, block);
+}
+
 void lcd_task(void *vpars)
 {
 	int l;
 	int i;
+	int ret = 1;
 
 	dump = 1;
 	for (l = 0; l < SL; l++)
 		lcd_setstr(l, 0, "                    ");
 
-	lcd_init();
 
 	while (1) {
 		if (dump && !i)
 			lcd_dump();
 		i = (i + 1) % 5;
-		if (!update) {
-			vTaskDelay(200);
+
+		vTaskDelay(200);
+		if (!update)
 			continue;
+
+		if (ret) {
+//			lcd_err_log(ret, 0);
+			ret = lcd_init();
+			update = -1;
 		}
+		if (ret)
+			continue;
 
 		for (l = 0; l < SL; l++) {
 			if (!(update & (1 << l)))
 				continue;
-			LCDI2C_setCursor(0, l);
-			LCDI2C_write_String(&buf[l * (SC + 1)]);
+			ret = LCDI2C_setCursor(0, l);
+			if (ret)
+				break;
+			ret = LCDI2C_write_String(&buf[l * (SC + 1)]);
+			if (ret)
+				break;
 		}
 		update = 0;
 	}
