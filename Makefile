@@ -94,6 +94,9 @@ load_stlink: main.bin
 reset:
 	openocd -f stm32f103c8t6-devboard.cfg  -c "init; reset run; shutdown"
 
+reset_stlink:
+	openocd -f stm32f103c8t6-stlink.cfg  -c "init; reset run; shutdown"
+
 inc/version.h:
 	sh -c 'echo "#define __VERSION \"$$(./setlocalversion)\""' > inc/version.h
 
