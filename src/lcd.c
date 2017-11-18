@@ -32,18 +32,24 @@ void lcd_setstr(int l, int off, char *s)
 	update |= 1 << l;
 }
 
-static void lcd_init()
+static int lcd_init()
 {
-	LCDI2C_init(PCF8574_ADDR, SC, SL);
-	LCDI2C_backlight();
-	LCDI2C_clear();
+	int ret;
+
+	ret = LCDI2C_init(PCF8574_ADDR, SC, SL);
+	if (ret)
+		return ret;
+	ret = LCDI2C_backlight();
+	if (ret)
+		return ret;
+	ret = LCDI2C_clear();
+	return ret;
 }
 
 void lcd_task(void *vpars)
 {
 	int l;
-
-	lcd_init();
+	int ret = 1;
 
 	for (l = 0; l < SL; l++)
 		lcd_setstr(l, 0, "01234567890123456789");
@@ -54,11 +60,22 @@ void lcd_task(void *vpars)
 			continue;
 		}
 
+		if (ret) {
+			ret = lcd_init();
+			update = -1;
+		}
+		if (ret)
+			continue;
+
 		for (l = 0; l < SL; l++) {
 			if (!(update & (1 << l)))
 				continue;
-			LCDI2C_setCursor(0, l);
-			LCDI2C_write_String(&buf[l * (SC + 1)]);
+			ret = LCDI2C_setCursor(0, l);
+			if (ret)
+				break;
+			ret = LCDI2C_write_String(&buf[l * (SC + 1)]);
+			if (ret)
+				break;
 		}
 		update = 0;
 	}
