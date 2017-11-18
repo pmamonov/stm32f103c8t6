@@ -1,4 +1,5 @@
 #include <errno.h>
+#include <stdint.h>
 #include <sys/stat.h>
 #include <sys/times.h>
 #include <sys/unistd.h>
