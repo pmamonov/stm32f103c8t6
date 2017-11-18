@@ -67,13 +67,13 @@ typedef struct
 } LiquidCrystal_I2C_Def;
 
 
-  void LCDI2C_write(uint8_t value);
-  void LCDI2C_init(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t lcd_rows);
-  void LCDI2C_begin(uint8_t cols, uint8_t rows);//, uint8_t charsize = LCD_5x8DOTS ); если у вас другой размер символов - поправьте тут и в описании функции
-  void LCDI2C_clear();
-  void LCDI2C_home();
+  int LCDI2C_write(uint8_t value);
+  int LCDI2C_init(uint8_t lcd_Addr,uint8_t lcd_cols,uint8_t lcd_rows);
+  int LCDI2C_begin(uint8_t cols, uint8_t rows);//, uint8_t charsize = LCD_5x8DOTS ); если у вас другой размер символов - поправьте тут и в описании функции
+  int LCDI2C_clear();
+  int LCDI2C_home();
   void LCDI2C_noDisplay();
-  void LCDI2C_display();
+  int LCDI2C_display();
   void LCDI2C_noBlink();
   void LCDI2C_blink();
   void LCDI2C_noCursor();
@@ -86,14 +86,14 @@ typedef struct
   void LCDI2C_rightToLeft();
   void LCDI2C_shiftIncrement();
   void LCDI2C_shiftDecrement();
-  void LCDI2C_noBacklight();
-  void LCDI2C_backlight();
+  int LCDI2C_noBacklight();
+  int LCDI2C_backlight();
   void LCDI2C_autoscroll();
   void LCDI2C_noAutoscroll();
   void LCDI2C_createChar(uint8_t location, uint8_t charmap[]);
-  void LCDI2C_setCursor(uint8_t col, uint8_t row);
-  void LCDI2C_write_String(char* str);
-  void LCDI2C_command(uint8_t value);
+  int LCDI2C_setCursor(uint8_t col, uint8_t row);
+  int LCDI2C_write_String(char* str);
+  int LCDI2C_command(uint8_t value);
 //  void LCDI2C_init();
 
 ////compatibility API function aliases
@@ -106,10 +106,10 @@ void LCDI2C_load_custom_character(uint8_t char_num, uint8_t *rows);	// alias for
 void LCDI2C_printstr(const char[]);
 
 //void LCDI2C_init_priv();
-void LCDI2C_send(uint8_t, uint8_t);
-void LCDI2C_write4bits(uint8_t);
-void LCDI2C_expanderWrite(uint8_t);
-void LCDI2C_pulseEnable(uint8_t);
+int LCDI2C_send(uint8_t, uint8_t);
+int LCDI2C_write4bits(uint8_t);
+int LCDI2C_expanderWrite(uint8_t);
+int LCDI2C_pulseEnable(uint8_t);
 
 
 #endif

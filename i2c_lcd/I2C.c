@@ -4,10 +4,16 @@
 #include "stm32f10x_i2c.h"
 #include "I2C.h"
 
-
 //для I2C
 GPIO_InitTypeDef i2c_gpio;
 I2C_InitTypeDef i2c;
+
+static inline void __delay()
+{
+	volatile int d = 100;
+	while (d--)
+		;
+}
 
 void init_I2C1(void)
 {
@@ -15,6 +21,10 @@ void init_I2C1(void)
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB,ENABLE);
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
     RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1, ENABLE);
+
+    I2C_SoftwareResetCmd(I2C1, ENABLE);
+    __delay();
+    I2C_SoftwareResetCmd(I2C1, DISABLE);
 
     // А вот и настройка I2C
     i2c.I2C_ClockSpeed = 100000;
@@ -37,34 +47,57 @@ void init_I2C1(void)
 }
 
 /*******************************************************************/
-void I2C_StartTransmission(I2C_TypeDef* I2Cx, uint8_t transmissionDirection,  uint8_t slaveAddress)
+int I2C_StartTransmission(I2C_TypeDef* I2Cx, uint8_t transmissionDirection,  uint8_t slaveAddress)
 {
+    int timeout = 10;
+
     // На всякий слуыай ждем, пока шина осовободится
-    while(I2C_GetFlagStatus(I2Cx, I2C_FLAG_BUSY));
+    while(timeout-- && I2C_GetFlagStatus(I2Cx, I2C_FLAG_BUSY))
+    	__delay();
+    if (timeout == -1)
+    	return EBUSY;
     // Генерируем старт - тут все понятно )
     I2C_GenerateSTART(I2Cx, ENABLE);
     // Ждем пока взлетит нужный флаг
-    while(!I2C_CheckEvent(I2Cx, I2C_EVENT_MASTER_MODE_SELECT));
+    timeout = 10;
+    while(timeout-- && !I2C_CheckEvent(I2Cx, I2C_EVENT_MASTER_MODE_SELECT))
+    	__delay();
+    if (timeout == -1)
+    	return EMASTER;
     // Посылаем адрес подчиненному  //возможно тут нужен сдвиг влево  //судя по исходникам - да, нужен сдвиг влево
     //http://microtechnics.ru/stm32-ispolzovanie-i2c/#comment-8109
     I2C_Send7bitAddress(I2Cx, slaveAddress<<1, transmissionDirection);
     // А теперь у нас два варианта развития событий - в зависимости от выбранного направления обмена данными
+    timeout = 10;
     if(transmissionDirection== I2C_Direction_Transmitter)
     {
-    	while(!I2C_CheckEvent(I2Cx, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
+        while(timeout-- && !I2C_CheckEvent(I2Cx, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
+		__delay(1);
+	if (timeout == -1)
+		return ETRANS;
     }
     if(transmissionDirection== I2C_Direction_Receiver)
     {
-	while(!I2C_CheckEvent(I2Cx, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED));
+	while(timeout-- && !I2C_CheckEvent(I2Cx, I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED))
+		__delay(1);
+	if (timeout == -1)
+		return ERECV;
     }
+    return 0;
 }
 
 /*******************************************************************/
-void I2C_WriteData(I2C_TypeDef* I2Cx, uint8_t data)
+int I2C_WriteData(I2C_TypeDef* I2Cx, uint8_t data)
 {
+    int timeout = 10;
+
     // Просто вызываем готоваую функцию из SPL и ждем, пока данные улетят
     I2C_SendData(I2Cx, data);
-    while(!I2C_CheckEvent(I2Cx, I2C_EVENT_MASTER_BYTE_TRANSMITTED));
+    while(timeout-- && !I2C_CheckEvent(I2Cx, I2C_EVENT_MASTER_BYTE_TRANSMITTED))
+    	__delay();
+    if (timeout == -1)
+    	return EMBTRANS;
+    return 0;
 }
 
 
