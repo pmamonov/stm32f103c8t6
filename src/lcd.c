@@ -7,6 +7,8 @@
 
 #define min(a, b)	((a) < (b) ? (a) : (b))
 
+#define PERIOD	(configTICK_RATE_HZ / 5)
+
 static char buf[SL * (SC + 1)];
 static volatile int update;
 static volatile int dump;
@@ -96,6 +98,7 @@ void lcd_task(void *vpars)
 	int l;
 	int i;
 	int ret = 1;
+	portTickType t = xTaskGetTickCount();
 
 	dump = 1;
 	for (l = 0; l < SL; l++)
@@ -103,11 +106,13 @@ void lcd_task(void *vpars)
 
 
 	while (1) {
+		vTaskDelayUntil(&t, PERIOD);
+		t = xTaskGetTickCount();
+
 		if (dump && !i)
 			lcd_dump();
 		i = (i + 1) % 5;
 
-		vTaskDelay(200);
 		if (!update)
 			continue;
 
