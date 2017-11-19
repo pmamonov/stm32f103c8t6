@@ -117,7 +117,7 @@ void lcd_task(void *vpars)
 			continue;
 
 		if (ret) {
-//			lcd_err_log(ret, 0);
+			lcd_err_log(ret, 0);
 			ret = lcd_init();
 			update = -1;
 		}
