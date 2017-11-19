@@ -8,6 +8,7 @@
 GPIO_InitTypeDef i2c_gpio;
 I2C_InitTypeDef i2c;
 
+#define TIMEOUT	1000
 static inline void __delay()
 {
 	volatile int d = 100;
@@ -49,7 +50,7 @@ void init_I2C1(void)
 /*******************************************************************/
 int I2C_StartTransmission(I2C_TypeDef* I2Cx, uint8_t transmissionDirection,  uint8_t slaveAddress)
 {
-    int timeout = 10;
+    int timeout = TIMEOUT;
 
     // На всякий слуыай ждем, пока шина осовободится
     while(timeout-- && I2C_GetFlagStatus(I2Cx, I2C_FLAG_BUSY))
@@ -59,7 +60,7 @@ int I2C_StartTransmission(I2C_TypeDef* I2Cx, uint8_t transmissionDirection,  uin
     // Генерируем старт - тут все понятно )
     I2C_GenerateSTART(I2Cx, ENABLE);
     // Ждем пока взлетит нужный флаг
-    timeout = 10;
+    timeout = TIMEOUT;
     while(timeout-- && !I2C_CheckEvent(I2Cx, I2C_EVENT_MASTER_MODE_SELECT))
     	__delay();
     if (timeout == -1)
@@ -68,7 +69,7 @@ int I2C_StartTransmission(I2C_TypeDef* I2Cx, uint8_t transmissionDirection,  uin
     //http://microtechnics.ru/stm32-ispolzovanie-i2c/#comment-8109
     I2C_Send7bitAddress(I2Cx, slaveAddress<<1, transmissionDirection);
     // А теперь у нас два варианта развития событий - в зависимости от выбранного направления обмена данными
-    timeout = 10;
+    timeout = TIMEOUT;
     if(transmissionDirection== I2C_Direction_Transmitter)
     {
         while(timeout-- && !I2C_CheckEvent(I2Cx, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED))
@@ -89,7 +90,7 @@ int I2C_StartTransmission(I2C_TypeDef* I2Cx, uint8_t transmissionDirection,  uin
 /*******************************************************************/
 int I2C_WriteData(I2C_TypeDef* I2Cx, uint8_t data)
 {
-    int timeout = 10;
+    int timeout = TIMEOUT;
 
     // Просто вызываем готоваую функцию из SPL и ждем, пока данные улетят
     I2C_SendData(I2Cx, data);
