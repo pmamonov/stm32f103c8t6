@@ -33,7 +33,9 @@ void lcd_setstr(int l, int off, char *s)
 
 	memcpy(&buf[l * (SC + 1) + off], s, sl);
 	buf[l * (SC + 1) + SC] = 0;
+	taskENTER_CRITICAL();
 	update |= 1 << l;
+	taskEXIT_CRITICAL();
 }
 
 static int lcd_init()
