@@ -82,6 +82,7 @@ void lcd_task(void *vpars)
 			if (ret)
 				break;
 		}
-		update = 0;
+		if (!ret)
+			update = 0;
 	}
 }
