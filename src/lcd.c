@@ -61,7 +61,6 @@ void lcd_task(void *vpars)
 
 	while (1) {
 		vTaskDelayUntil(&t, PERIOD);
-		t = xTaskGetTickCount();
 
 		if (!update)
 			continue;
