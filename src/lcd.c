@@ -6,7 +6,7 @@
 
 #define min(a, b)	((a) < (b) ? (a) : (b))
 
-#define PERIOD	(configTICK_RATE_HZ / 5)
+#define PERIOD	(configTICK_RATE_HZ * 10)
 
 static char buf[SL * (SC + 1)];
 static volatile int update;
@@ -50,20 +50,36 @@ static int lcd_init()
 	return ret;
 }
 
+#define buf(l, c) (buf[(l) * (SC + 1) + (c)])
+
+static void symtab(int i)
+{
+	int l, c;
+	char x;
+
+	for (l = 0; l < SL; l++)
+		for (c = 0; c < SC; c++)
+			if (i < 0x100)
+				buf(l, c) = i++;
+			else
+				buf(l, c) = ' ';
+}
+
 void lcd_task(void *vpars)
 {
-	int l;
+	int l, i = 0;
 	int ret = 1;
 	portTickType t = xTaskGetTickCount();
 
-	for (l = 0; l < SL; l++)
-		lcd_setstr(l, 0, "01234567890123456789");
 
 	while (1) {
 		vTaskDelayUntil(&t, PERIOD);
 
-		if (!update)
-			continue;
+		symtab(i);
+		i += SL * SC;
+		if (i > 0xff)
+			i = 0;
+		update = -1;
 
 		if (ret) {
 			ret = lcd_init();
