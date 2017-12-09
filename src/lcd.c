@@ -1,3 +1,4 @@
+#include "stdlib.h"
 #include "string.h"
 #include "FreeRTOS.h"
 #include "task.h"
@@ -6,7 +7,7 @@
 
 #define min(a, b)	((a) < (b) ? (a) : (b))
 
-#define PERIOD	(configTICK_RATE_HZ / 5)
+#define PERIOD	(configTICK_RATE_HZ / 8)
 
 static char buf[SL * (SC + 1)];
 static volatile int update;
@@ -50,21 +51,24 @@ static int lcd_init()
 	return ret;
 }
 
+#define buf(l, c) (buf[(l) * (SC + 1) + (c)])
+
 void lcd_task(void *vpars)
 {
-	int l;
+	int l, c;
 	int ret = 1;
 	portTickType t = xTaskGetTickCount();
+	unsigned long long dmg[SL];
 
-	for (l = 0; l < SL; l++)
-		lcd_setstr(l, 0, "01234567890123456789");
+
+	srand(0);
+	for (c = 0; c < SC; c++)
+		for (l = 0; l < SL; l++)
+			buf(l, c) = ' '; //rand() < RAND_MAX / 4 ? '*' : ' ';
+
+	update = -1;
 
 	while (1) {
-		vTaskDelayUntil(&t, PERIOD);
-
-		if (!update)
-			continue;
-
 		if (ret) {
 			ret = lcd_init();
 			update = -1;
@@ -72,17 +76,45 @@ void lcd_task(void *vpars)
 		if (ret)
 			continue;
 
+		memset(dmg, 0, sizeof(dmg));
+
+		for (c = 0; c < SC - 1; c++)
+			for (l = 0; l < SL; l++) {
+				if (buf(l, c) != buf(l, c + 1)) {
+					buf(l, c) = buf(l, c + 1);
+					dmg[l] |= 1ull << c;
+				}
+			}
+
 		for (l = 0; l < SL; l++) {
-			if (!(update & (1 << l)))
-				continue;
-			ret = LCDI2C_setCursor(0, l);
-			if (ret)
-				break;
-			ret = LCDI2C_write_String(&buf[l * (SC + 1)]);
-			if (ret)
-				break;
+			char x = buf(l,SC - 2) == ' ' &&
+					buf(l,SC - 3) == ' ' &&
+					(l ? buf(l - 1, SC - 1) == ' ' : 1) &&
+					rand() % 100 < 20 ?
+				(rand() % 100 < 33 ? 'O' :
+				(rand() % 100 < 50 ? 'o' :
+				(rand() % 100 < 80 ? '.' :
+				(rand() % 100 < 50 ? '8' : '0')))) : ' ';
+			if (buf(l, c) != x) {
+				buf(l, c) = x;
+				dmg[l] |= 1 << c;
+			}
 		}
-		if (!ret)
-			update = 0;
+
+
+		for (l = 0; l < SL; l++)
+			for (c = SC - 1; c >= 0; c--)
+				if (buf(l, c) != ' ' && (dmg[l] >> c) & 1) {
+					ret = LCDI2C_setCursor(c, l);
+					ret |= LCDI2C_write(buf(l, c));
+				}
+		vTaskDelayUntil(&t, configTICK_RATE_HZ * 15 / 100);
+		for (l = 0; l < SL; l++)
+			for (c = SC - 1; c >= 0; c--)
+				if (buf(l, c) == ' ' && (dmg[l] >> c) & 1) {
+					ret = LCDI2C_setCursor(c, l);
+					ret |= LCDI2C_write(buf(l, c));
+				}
+		vTaskDelayUntil(&t, configTICK_RATE_HZ * 15 / 100);
 	}
 }
