@@ -105,13 +105,13 @@ void lcd_task(void *vpars)
 					ret = LCDI2C_setCursor(c, l);
 					ret |= LCDI2C_write(buf(l, c));
 				}
-//		vTaskDelayUntil(&t, configTICK_RATE_HZ * 20 / 100);
+		vTaskDelayUntil(&t, configTICK_RATE_HZ * 20 / 100);
 		for (l = 0; l < SL; l++)
 			for (c = SC - 1; c >= 0; c--)
 				if (buf(l, c) == ' ' && (dmg[l] >> c) & 1) {
 					ret = LCDI2C_setCursor(c, l);
 					ret |= LCDI2C_write(buf(l, c));
 				}
-		vTaskDelayUntil(&t, configTICK_RATE_HZ * 40 / 100);
+		vTaskDelayUntil(&t, configTICK_RATE_HZ * 20 / 100);
 	}
 }
