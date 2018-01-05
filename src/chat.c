@@ -5,6 +5,7 @@
 #include "version.h"
 #include "lcd.h"
 #include "i2c.h"
+#include "pwm.h"
 
 #define PROMPT	"> "
 
@@ -16,6 +17,7 @@ enum {
 	CMD_DISP,
 	CMD_I2CDET,
 	CMD_CO2,
+	CMD_PWM,
 
 	CMD_LAST
 };
@@ -28,6 +30,7 @@ char *cmd_list[CMD_LAST] = {
 	[CMD_DISP] =	"disp",
 	[CMD_I2CDET] =	"i2cdetect",
 	[CMD_CO2] =	"co2",
+	[CMD_PWM] =	"pwm",
 };
 
 void vChatTask(void *vpars)
@@ -174,6 +177,45 @@ void vChatTask(void *vpars)
 			sniprintf(s, sizeof(s), "%02x %02x %x\r\n",
 				resp[0], resp[1], ((unsigned)resp[2] << 16) | resp[3]);
 
+		} else if (strcmp(tk, cmd_list[CMD_PWM]) == 0) {
+			unsigned int c, d, dc;
+			char *help = "pwm <PWM> <DELAY_MS> <DUTY_CYCLE_%>\r\n";
+
+			tk = _strtok(NULL, " \n\r");
+			if (!tk) {
+				memcpy(s, help, strlen(help) + 1);
+				goto out;
+			}
+			c = atoi(tk);
+			if (c >= pwm_count()) {
+				sniprintf(s, sizeof(s), "E: PWM%d unavailable\r\n", c);
+				goto out;
+			}
+
+			tk = _strtok(NULL, " \n\r");
+			if (!tk) {
+				memcpy(s, help, strlen(help) + 1);
+				goto out;
+			}
+			d = atoi(tk);
+
+			tk = _strtok(NULL, " \n\r");
+			if (!tk) {
+				memcpy(s, help, strlen(help) + 1);
+				goto out;
+			}
+			dc = atoi(tk);
+
+			if (dc > 100) {
+				sniprintf(s, sizeof(s), "E: duty cycle %d%% > 100%%\r\n", dc);
+				goto out;
+			}
+
+			if (d > 0) {
+				pwm_set(c, 100);
+				vTaskDelay(d);
+			}
+			pwm_set(c, dc);
 		} else
 			sniprintf(s, sizeof(s), "E: try `help`\r\n");
 out:
