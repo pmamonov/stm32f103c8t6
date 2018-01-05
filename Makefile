@@ -22,6 +22,7 @@ CFLAGS = -mcpu=cortex-m3 -mthumb -Os -g\
 #src/startup_stm32f10x_md.o\
 
 OBJ = src/startup_stm32f10x_md.o \
+  src/pwm.o \
   src/blink.o \
   src/adc.o \
   src/chat.o \
@@ -49,6 +50,7 @@ OBJ = src/startup_stm32f10x_md.o \
   STM32F10x_StdPeriph_Driver/src/stm32f10x_adc.o\
   STM32F10x_StdPeriph_Driver/src/stm32f10x_i2c.o \
   STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.o \
+  STM32F10x_StdPeriph_Driver/src/stm32f10x_tim.o \
   STM32F10x_StdPeriph_Driver/src/misc.o\
   STM32_USB-FS-Device_Driver/src/usb_regs.o\
   STM32_USB-FS-Device_Driver/src/usb_int.o\
