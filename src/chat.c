@@ -3,6 +3,7 @@
 #include "chat.h"
 #include "strtok.h"
 #include "version.h"
+#include "pwm.h"
 
 #define PROMPT	"> "
 
@@ -10,6 +11,7 @@ enum {
 	CMD_HELP = 0,
 	CMD_VER,
 	CMD_DATE,
+	CMD_PWM,
 	CMD_LAST
 };
 
@@ -17,6 +19,7 @@ char *cmd_list[CMD_LAST] = {
 	"help",
 	"ver",
 	"date",
+	"pwm",
 };
 
 void vChatTask(void *vpars)
@@ -71,6 +74,45 @@ void vChatTask(void *vpars)
 		} else if (strcmp(tk, cmd_list[CMD_DATE]) == 0) {
 			sniprintf(s, sizeof(s), "%d\r\n", xTaskGetTickCount());
 
+		} else if (strcmp(tk, cmd_list[CMD_PWM]) == 0) {
+			unsigned int c, d, dc;
+			char *help = "pwm <PWM> <DELAY_MS> <DUTY_CYCLE_%>\r\n";
+
+			tk = _strtok(NULL, " \n\r");
+			if (!tk) {
+				memcpy(s, help, strlen(help) + 1);
+				goto out;
+			}
+			c = atoi(tk);
+			if (c >= NPWM) {
+				sniprintf(s, sizeof(s), "E: PWM%d unavailable\r\n", c, NPWM);
+				goto out;
+			}
+
+			tk = _strtok(NULL, " \n\r");
+			if (!tk) {
+				memcpy(s, help, strlen(help) + 1);
+				goto out;
+			}
+			d = atoi(tk);
+
+			tk = _strtok(NULL, " \n\r");
+			if (!tk) {
+				memcpy(s, help, strlen(help) + 1);
+				goto out;
+			}
+			dc = atoi(tk);
+
+			if (dc > 100) {
+				sniprintf(s, sizeof(s), "E: duty cycle %d%% > 100%%\r\n", dc);
+				goto out;
+			}
+
+			if (d > 0) {
+				pwm_set(c, 100);
+				vTaskDelay(d);
+			}
+			pwm_set(c, dc);
 		} else
 			sniprintf(s, sizeof(s), "E: what?\r\n");
 out:
