@@ -13,6 +13,7 @@
 #include "chat.h"
 #include "lcd.h"
 #include "flash.h"
+#include "pwm.h"
 
 #define USB_DP_PU_RCC	RCC_APB2Periph_GPIOA
 #define USB_DP_PU_GPIO	GPIOA
@@ -42,6 +43,8 @@ int main(void)
 	usb_dp_pu();
 
 	flash_load();
+
+	pwm_init_all(10000);
 
 	err = xTaskCreate(vBlinkTask, "blink", 64, NULL,
 			  tskIDLE_PRIORITY + 1, NULL );
