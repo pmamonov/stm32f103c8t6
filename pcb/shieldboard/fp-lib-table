@@ -1,0 +1,4 @@
+(fp_lib_table
+  (lib (name ki_modules)(type KiCad)(uri /home/room257/dev/землекопы/pcb/shieldboard/ki_modules.pretty)(options "")(descr ""))
+  (lib (name ecaps)(type Legacy)(uri /home/room257/dev/землекопы/pcb/shieldboard/ecaps.mod)(options "")(descr ""))
+)

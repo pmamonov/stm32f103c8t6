@@ -1,0 +1,182 @@
+PCBNEW-LibModule-V1  Вт 26 апр 2016 18:27:26
+# encoding utf-8
+Units mm
+$INDEX
+CP_12mm
+CP_18mm
+CP_22mm
+CP_25mm
+CP_6-10mm
+CP_6mm
+$EndINDEX
+$MODULE CP_12mm
+Po 0 0 0 15 571BE17A 00000000 ~~
+Li CP_12mm
+Sc 0
+AR 
+Op 0 0 0
+T0 0 -2.5 1 1 0 0.15 N V 21 N "CP_12mm"
+T1 0 2.5 1 1 0 0.15 N I 21 N "VAL**"
+DS -5 0 -3 0 0.15 21
+DS -4 -1 -4 1 0.15 21
+DC 0 0 6 0 0.15 21
+$PAD
+Sh "1" C 1.4 1.4 0 0 0
+Dr 0.8 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po -2.5 0
+$EndPAD
+$PAD
+Sh "2" C 1.4 1.4 0 0 0
+Dr 0.8 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po 2.5 0
+$EndPAD
+$EndMODULE CP_12mm
+$MODULE CP_18mm
+Po 0 0 0 15 571BE25A 00000000 ~~
+Li CP_18mm
+Sc 0
+AR 
+Op 0 0 0
+T0 0 -2 1 1 0 0.15 N V 21 N "CP_18mm"
+T1 0 2 1 1 0 0.15 N I 21 N "VAL**"
+DS -6 -1 -6 1 0.15 21
+DS -7 0 -5 0 0.15 21
+DC 0 0 9 0 0.15 21
+$PAD
+Sh "1" C 1.6 1.6 0 0 0
+Dr 1 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po -3.75 0
+$EndPAD
+$PAD
+Sh "2" C 1.6 1.6 0 0 0
+Dr 1 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po 3.75 0
+$EndPAD
+$EndMODULE CP_18mm
+$MODULE CP_22mm
+Po 0 0 0 15 571BE273 00000000 ~~
+Li CP_22mm
+Sc 0
+AR 
+Op 0 0 0
+T0 0 -2 1 1 0 0.15 N V 21 N "CP_22mm"
+T1 0 2 1 1 0 0.15 N I 21 N "VAL**"
+DS -8 -1 -8 1 0.15 21
+DS -9 0 -7 0 0.15 21
+DC 0 0 11 0 0.15 21
+$PAD
+Sh "1" C 1.8 1.8 0 0 0
+Dr 1.2 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po -5 0
+$EndPAD
+$PAD
+Sh "2" C 1.8 1.8 0 0 0
+Dr 1.2 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po 5 0
+$EndPAD
+$EndMODULE CP_22mm
+$MODULE CP_25mm
+Po 0 0 0 15 571BE2F9 00000000 ~~
+Li CP_25mm
+Sc 0
+AR 
+Op 0 0 0
+T0 0 -2 1 1 0 0.15 N V 21 N "CP_25mm"
+T1 0 2 1 1 0 0.15 N I 21 N "VAL**"
+DS -9 -1 -9 1 0.15 21
+DS -10 0 -8 0 0.15 21
+DC 0 0 12.5 0 0.15 21
+$PAD
+Sh "1" C 1.8 1.8 0 0 0
+Dr 1.2 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po -6.25 0
+$EndPAD
+$PAD
+Sh "2" C 1.8 1.8 0 0 0
+Dr 1.2 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po 6.25 0
+$EndPAD
+$EndMODULE CP_25mm
+$MODULE CP_6-10mm
+Po 0 0 0 15 571F88BC 00000000 ~~
+Li CP_6-10mm
+Sc 0
+AR 
+Op 0 0 0
+T0 0 -1 1 1 0 0.15 N V 21 N "CP_6-10mm"
+T1 0 1 1 1 0 0.15 N I 21 N "VAL**"
+DS -4 -0.5 -4 0.5 0.15 21
+DS -4.5 0 -3.5 0 0.15 21
+DC 0 0 5 0 0.15 21
+$PAD
+Sh "1" C 1.4 1.4 0 0 0
+Dr 0.8 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po -2.5 0
+$EndPAD
+$PAD
+Sh "2" C 1.4 1.4 0 0 0
+Dr 0.8 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po 2.5 0
+$EndPAD
+$PAD
+Sh "2" C 1 1 0 0 0
+Dr 0.6 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po 0 0
+$EndPAD
+$PAD
+Sh "2" C 1.3 1.3 0 0 0
+Dr 0.7 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po 1 0
+$EndPAD
+$EndMODULE CP_6-10mm
+$MODULE CP_6mm
+Po 0 0 0 15 571F86D3 00000000 ~~
+Li CP_6mm
+Sc 0
+AR 
+Op 0 0 0
+T0 0 -1 1 1 0 0.15 N V 21 N "CP_6mm"
+T1 0 1 1 1 0 0.15 N I 21 N "VAL**"
+DS -2 -2 -1 -2 0.15 21
+DS -1.5 -2.5 -1.5 -1.5 0.15 21
+DC 0 0 3.25 0 0.15 21
+$PAD
+Sh "1" C 1.4 1.4 0 0 0
+Dr 0.8 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po -1.25 0
+$EndPAD
+$PAD
+Sh "2" C 1.4 1.4 0 0 0
+Dr 0.8 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po 1.25 0
+$EndPAD
+$EndMODULE CP_6mm
+$EndLIBRARY
