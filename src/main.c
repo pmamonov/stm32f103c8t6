@@ -14,9 +14,9 @@
 #include "lcd.h"
 #include "flash.h"
 
-#define USB_DP_PU_RCC	RCC_APB2Periph_GPIOB
-#define USB_DP_PU_GPIO	GPIOB
-#define USB_DP_PU_PIN	GPIO_Pin_9
+#define USB_DP_PU_RCC	RCC_APB2Periph_GPIOA
+#define USB_DP_PU_GPIO	GPIOA
+#define USB_DP_PU_PIN	GPIO_Pin_10
 
 static void usb_dp_pu()
 {
