@@ -4,6 +4,7 @@
 #include "strtok.h"
 #include "version.h"
 #include "lcd.h"
+#include "blink.h"
 
 #define PROMPT	"> "
 
@@ -12,6 +13,7 @@ enum {
 	CMD_VER,
 	CMD_DATE,
 	CMD_DISP,
+	CMD_BLINK,
 	CMD_LAST
 };
 
@@ -20,6 +22,7 @@ char *cmd_list[CMD_LAST] = {
 	"ver",
 	"date",
 	"disp",
+	"blink",
 };
 
 void vChatTask(void *vpars)
@@ -110,6 +113,8 @@ void vChatTask(void *vpars)
 
 			lcd_setstr(l, o, tk);
 
+		} else if (strcmp(tk, cmd_list[CMD_BLINK]) == 0) {
+			blink_toggle();
 		} else
 			sniprintf(s, sizeof(s), "E: what?\r\n");
 out:
