@@ -10,5 +10,7 @@
 #define SYS_LED_PIN GPIO_Pin_13
 
 void vBlinkTask(void *vpars);
+void blink_toggle();
+void blink_init();
 
 #endif
