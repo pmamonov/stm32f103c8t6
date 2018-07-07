@@ -1,0 +1,9 @@
+(module conn_1mm (layer F.Cu) (tedit 5B3C60A7)
+  (fp_text reference J5 (at 0 -1) (layer F.SilkS)
+    (effects (font (size 1 1) (thickness 0.15)))
+  )
+  (fp_text value sensor (at 0 1) (layer F.SilkS) hide
+    (effects (font (size 1 1) (thickness 0.15)))
+  )
+  (pad 1 thru_hole circle (at 0 0) (size 2 2) (drill 1) (layers *.Cu))
+)

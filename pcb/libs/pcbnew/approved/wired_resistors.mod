@@ -1,0 +1,180 @@
+PCBNEW-LibModule-V1  Вс 24 апр 2016 16:40:37
+# encoding utf-8
+Units mm
+$INDEX
+R_15mm
+R_15mm_vert
+R_22mm_5W
+R_48mm_10W
+R_6mm
+R_6mm_vert
+$EndINDEX
+$MODULE R_15mm
+Po 0 0 0 15 571CCB81 00000000 ~~
+Li R_15mm
+Sc 0
+AR 
+Op 0 0 0
+T0 0 -1 1 1 0 0.15 N V 21 N "R_15mm"
+T1 0 1 1 1 0 0.15 N I 21 N "VAL**"
+DS -7.5 0 -9 0 0.15 21
+DS 7.5 0 9 0 0.15 21
+DS -7.5 -2.5 -7.5 2.5 0.15 21
+DS -7.5 2.5 7.5 2.5 0.15 21
+DS 7.5 2.5 7.5 -2.5 0.15 21
+DS 7.5 -2.5 -7.5 -2.5 0.15 21
+$PAD
+Sh "1" C 1.6 1.6 0 0 0
+Dr 1 0 0
+At STD N 0000FFFF
+Ne 0 ""
+Po -10 0
+$EndPAD
+$PAD
+Sh "2" C 1.6 1.6 0 0 0
+Dr 1 0 0
+At STD N 0000FFFF
+Ne 0 ""
+Po 10 0
+$EndPAD
+$EndMODULE R_15mm
+$MODULE R_15mm_vert
+Po 0 0 0 15 571CCBE0 00000000 ~~
+Li R_15mm_vert
+Sc 0
+AR 
+Op 0 0 0
+T0 0 -1 1 1 0 0.15 N V 21 N "R_15mm_vert"
+T1 0 1 1 1 0 0.15 N I 21 N "VAL**"
+DS 0 0.5 1.5 0.5 0.15 21
+DS 0 -0.5 1.5 -0.5 0.15 21
+DC -2.5 0 0 0 0.15 21
+$PAD
+Sh "1" C 1.6 1.6 0 0 0
+Dr 1 0 0
+At STD N 0000FFFF
+Ne 0 ""
+Po -2.5 0
+$EndPAD
+$PAD
+Sh "2" C 1.6 1.6 0 0 0
+Dr 1 0 0
+At STD N 0000FFFF
+Ne 0 ""
+Po 2.5 0
+$EndPAD
+$EndMODULE R_15mm_vert
+$MODULE R_22mm_5W
+Po 0 0 0 15 571CCC6C 00000000 ~~
+Li R_22mm_5W
+Sc 0
+AR 
+Op 0 0 0
+T0 0 -1 1 1 0 0.15 N V 21 N "R_22mm_5W"
+T1 0 1 1 1 0 0.15 N I 21 N "VAL**"
+DS 11 0 13 0 0.15 21
+DS -11 0 -13 0 0.15 21
+DS -11 -5 -11 5 0.15 21
+DS -11 5 11 5 0.15 21
+DS 11 5 11 -5 0.15 21
+DS 11 -5 -11 -5 0.15 21
+$PAD
+Sh "1" C 2 2 0 0 0
+Dr 1 0 0
+At STD N 0000FFFF
+Ne 0 ""
+Po -15 0
+$EndPAD
+$PAD
+Sh "2" C 2 2 0 0 0
+Dr 1 0 0
+At STD N 0000FFFF
+Ne 0 ""
+Po 15 0
+$EndPAD
+$EndMODULE R_22mm_5W
+$MODULE R_48mm_10W
+Po 0 0 0 15 571CCCCF 00000000 ~~
+Li R_48mm_10W
+Sc 0
+AR 
+Op 0 0 0
+T0 0 -1 1 1 0 0.15 N V 21 N "R_48mm_10W"
+T1 0 1 1 1 0 0.15 N I 21 N "VAL**"
+DS 24 0 26 0 0.15 21
+DS -24 0 -26 0 0.15 21
+DS -24 -5 -24 5 0.15 21
+DS -24 5 24 5 0.15 21
+DS 24 5 24 -5 0.15 21
+DS 24 -5 -24 -5 0.15 21
+$PAD
+Sh "1" C 2 2 0 0 0
+Dr 1 0 0
+At STD N 0000FFFF
+Ne 0 ""
+Po -28 0
+$EndPAD
+$PAD
+Sh "2" C 2 2 0 0 0
+Dr 1 0 0
+At STD N 0000FFFF
+Ne 0 ""
+Po 28 0
+$EndPAD
+$EndMODULE R_48mm_10W
+$MODULE R_6mm
+Po 0 0 0 15 571CC9BD 00000000 ~~
+Li R_6mm
+Sc 0
+AR 
+Op 0 0 0
+T0 0 0 1 1 0 0.15 N V 21 N "R_6mm"
+T1 0 1.5 1 1 0 0.15 N I 21 N "VAL**"
+DS 3 0 4.25 0 0.15 21
+DS -3 0 -4.25 0 0.15 21
+DS -3 -1.25 -3 1.25 0.15 21
+DS -3 1.25 3 1.25 0.15 21
+DS 3 1.25 3 -1.25 0.15 21
+DS 3 -1.25 -3 -1.25 0.15 21
+$PAD
+Sh "1" C 1.4 1.4 0 0 0
+Dr 0.8 0 0
+At STD N 0000FFFF
+Ne 0 ""
+Po -5 0
+$EndPAD
+$PAD
+Sh "2" C 1.4 1.4 0 0 0
+Dr 0.8 0 0
+At STD N 0000FFFF
+Ne 0 ""
+Po 5 0
+$EndPAD
+$EndMODULE R_6mm
+$MODULE R_6mm_vert
+Po 0 0 0 15 571CCADC 00000000 ~~
+Li R_6mm_vert
+Sc 0
+AR 
+Op 0 0 0
+T0 0 -1 1 1 0 0.15 N V 21 N "R_6mm_vert"
+T1 0 1 1 1 0 0.15 N I 21 N "VAL**"
+DS 0 0.25 0.5 0.25 0.15 21
+DS 0 -0.25 0.5 -0.25 0.15 21
+DC -1.25 0 0 0 0.15 21
+$PAD
+Sh "1" C 1.4 1.4 0 0 0
+Dr 0.8 0 0
+At STD N 0000FFFF
+Ne 0 ""
+Po -1.25 0
+$EndPAD
+$PAD
+Sh "2" C 1.4 1.4 0 0 0
+Dr 0.8 0 0
+At STD N 0000FFFF
+Ne 0 ""
+Po 1.25 0
+$EndPAD
+$EndMODULE R_6mm_vert
+$EndLIBRARY

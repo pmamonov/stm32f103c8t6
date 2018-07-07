@@ -1,0 +1,9 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP AD7794
+D Fast ADC  (20 .. 60 Mhz), TSSOP-24
+K ADC CAN VIDEO
+F http://www.ti.com/lit/ds/symlink/adc08060.pdf
+$ENDCMP
+#
+#End Doc Library

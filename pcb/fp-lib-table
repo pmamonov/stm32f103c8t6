@@ -1,0 +1,11 @@
+(fp_lib_table
+  (lib (name zoidberg)(type KiCad)(uri "$(KIPRJMOD)/zoidberg.pretty")(options "")(descr ""))
+  (lib (name ki_modules)(type KiCad)(uri "$(KIPRJMOD)/libs/ki_libs/ki_modules.pretty")(options "")(descr ""))
+  (lib (name ecaps)(type Legacy)(uri "$(KIPRJMOD)/libs/pcbnew/approved/ecaps.mod")(options "")(descr ""))
+  (lib (name filmcaps)(type Legacy)(uri "$(KIPRJMOD)/libs/pcbnew/approved/filmcaps.mod")(options "")(descr ""))
+  (lib (name holes_and_conn)(type Legacy)(uri "$(KIPRJMOD)/libs/pcbnew/approved/holes_and_conn.mod")(options "")(descr ""))
+  (lib (name switches)(type Legacy)(uri "$(KIPRJMOD)/libs/pcbnew/approved/switches.mod")(options "")(descr ""))
+  (lib (name wired_resistors)(type Legacy)(uri "$(KIPRJMOD)/libs/pcbnew/approved/wired_resistors.mod")(options "")(descr ""))
+  (lib (name wired_semiconductors)(type Legacy)(uri "$(KIPRJMOD)/libs/pcbnew/approved/wired_semiconductors.mod")(options "")(descr ""))
+  (lib (name 3296W)(type Legacy)(uri "$(KIPRJMOD)/libs/3296W.mod")(options "")(descr ""))
+)

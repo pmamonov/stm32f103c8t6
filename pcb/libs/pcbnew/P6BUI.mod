@@ -1,0 +1,62 @@
+PCBNEW-LibModule-V1  Вс 15 мар 2015 02:22:28
+# encoding utf-8
+Units mm
+$INDEX
+P6BUI
+$EndINDEX
+$MODULE P6BUI
+Po 0 0 0 15 5504C248 00000000 ~~
+Li P6BUI
+Sc 0
+AR 
+Op 0 0 0
+T0 0 -7.62 1.5 1.5 0 0.15 N V 21 N "P6BUI"
+T1 0 7.62 1.5 1.5 0 0.15 N I 21 N "VAL**"
+DS 5.08 -6.35 5.08 6.35 0.15 21
+DS 5.08 6.35 -5.08 6.35 0.15 21
+DS -5.08 6.35 -5.08 -6.35 0.15 21
+DS -5.08 -6.35 5.08 -6.35 0.15 21
+$PAD
+Sh "1" C 1.4 1.4 0 0 0
+Dr 0.8 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po -3.81 -3.81
+$EndPAD
+$PAD
+Sh "4" C 1.4 1.4 0 0 0
+Dr 0.8 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po -3.81 3.81
+$EndPAD
+$PAD
+Sh "5" C 1.4 1.4 0 0 0
+Dr 0.8 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po 3.81 3.81
+$EndPAD
+$PAD
+Sh "6" C 1.4 1.4 0 0 0
+Dr 0.8 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po 3.81 1.27
+$EndPAD
+$PAD
+Sh "7" C 1.4 1.4 0 0 0
+Dr 0.8 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po 3.81 -1.27
+$EndPAD
+$PAD
+Sh "8" C 1.4 1.4 0 0 0
+Dr 0.8 0 0
+At STD N 00E0FFFF
+Ne 0 ""
+Po 3.81 -3.81
+$EndPAD
+$EndMODULE P6BUI
+$EndLIBRARY
