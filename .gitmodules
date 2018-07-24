@@ -1,0 +1,3 @@
+[submodule "ad779x"]
+	path = ad779x
+	url = https://github.com/pmamonov/AD779x-Library

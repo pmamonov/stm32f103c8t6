@@ -17,7 +17,8 @@ CFLAGS = -mcpu=cortex-m3 -mthumb -Os -g\
  -DUSE_STDPERIPH_DRIVER\
  -IFreeRTOS/Source/include\
  -IFreeRTOS/Source/portable/GCC/ARM_CM3 \
- -Ii2c_lcd
+ -Ii2c_lcd \
+ -Iad779x/ad779x_single
 
 #src/startup_stm32f10x_md.o\
 
@@ -39,6 +40,8 @@ OBJ = src/startup_stm32f10x_md.o \
   src/newlib_stubs.o\
   src/strtok.o\
   src/lcd.o i2c_lcd/I2C.o i2c_lcd/LiquidCrystal_I2C.o \
+  src/ad779x_stm32.o \
+  ad779x/ad779x_single/ad779x.o \
   FreeRTOS/Source/tasks.o\
   FreeRTOS/Source/queue.o\
   FreeRTOS/Source/list.o\
@@ -49,6 +52,7 @@ OBJ = src/startup_stm32f10x_md.o \
   STM32F10x_StdPeriph_Driver/src/stm32f10x_gpio.o\
   STM32F10x_StdPeriph_Driver/src/stm32f10x_adc.o\
   STM32F10x_StdPeriph_Driver/src/stm32f10x_i2c.o \
+  STM32F10x_StdPeriph_Driver/src/stm32f10x_spi.o \
   STM32F10x_StdPeriph_Driver/src/stm32f10x_flash.o \
   STM32F10x_StdPeriph_Driver/src/misc.o\
   STM32_USB-FS-Device_Driver/src/usb_regs.o\
