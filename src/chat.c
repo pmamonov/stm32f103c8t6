@@ -4,6 +4,7 @@
 #include "strtok.h"
 #include "version.h"
 #include "lcd.h"
+#include "ad779x_stm32.h"
 
 #define PROMPT	"> "
 
@@ -12,6 +13,8 @@ enum {
 	CMD_VER,
 	CMD_DATE,
 	CMD_DISP,
+	CMD_ADC_INIT,
+	CMD_ADC,
 	CMD_LAST
 };
 
@@ -20,6 +23,8 @@ char *cmd_list[CMD_LAST] = {
 	"ver",
 	"date",
 	"disp",
+	"adc_init",
+	"adc",
 };
 
 void vChatTask(void *vpars)
@@ -29,6 +34,7 @@ void vChatTask(void *vpars)
 	char *c;
 	char *tk;
 	int i = 0;
+	int adc_ret = ad779x_stm32_init();
 
 	while (1) {
 		cdc_write_buf(&cdc_out, PROMPT, sizeof(PROMPT) - 1, 1);
@@ -110,6 +116,23 @@ void vChatTask(void *vpars)
 
 			lcd_setstr(l, o, tk);
 
+		} else if (strcmp(tk, cmd_list[CMD_ADC_INIT]) == 0) {
+			adc_ret = ad779x_stm32_init();
+			sniprintf(s, sizeof(s), "%d / %d\r\n", adc_ret, spi_err);
+		} else if (strcmp(tk, cmd_list[CMD_ADC]) == 0) {
+			int i = 0;
+			unsigned long x;
+
+			if (adc_ret) {
+				sniprintf(s, sizeof(s),
+					"E: ADC init failed %d\r\n", adc_ret);
+				goto out;
+			}
+			tk = _strtok(NULL, " \n\r");
+			if (tk)
+				i = atoi(tk);
+			x = ad779x_stm32_read(i);
+			sniprintf(s, sizeof(s), "%d 0x%x\r\n", i, x);
 		} else
 			sniprintf(s, sizeof(s), "E: what?\r\n");
 out:
