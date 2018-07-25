@@ -49,9 +49,6 @@ int main(void)
 	err = xTaskCreate(vChatTask, "chat", 256, NULL,
 			  tskIDLE_PRIORITY + 1, NULL );
 
-	err = xTaskCreate(lcd_task, "lcd", 256, NULL,
-			  tskIDLE_PRIORITY + 1, NULL );
-
 	vTaskStartScheduler();
 
 	while(1)
