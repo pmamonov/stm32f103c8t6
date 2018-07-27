@@ -5,6 +5,7 @@
 #include "version.h"
 #include "lcd.h"
 #include "ad779x_stm32.h"
+#include <stm32f10x_spi.h>
 
 #define PROMPT	"> "
 
@@ -15,6 +16,8 @@ enum {
 	CMD_DISP,
 	CMD_ADC_INIT,
 	CMD_ADC,
+	CMD_SPI,
+
 	CMD_LAST
 };
 
@@ -25,6 +28,7 @@ char *cmd_list[CMD_LAST] = {
 	"disp",
 	"adc_init",
 	"adc",
+	"spi",
 };
 
 void vChatTask(void *vpars)
@@ -133,6 +137,17 @@ void vChatTask(void *vpars)
 				i = atoi(tk);
 			x = ad779x_stm32_read(i);
 			sniprintf(s, sizeof(s), "%d 0x%x\r\n", i, x);
+		} else if (strcmp(tk, cmd_list[CMD_SPI]) == 0) {
+			int n = 10000, x = 0xaa;
+
+			while (n--) {
+				spi_err = 0;
+				spi_tx(x);
+				if (spi_err) {
+					sniprintf(s, sizeof(s), "E: %d\r\n", spi_err);
+					goto out;
+				}
+			}
 		} else
 			sniprintf(s, sizeof(s), "E: what?\r\n");
 out:

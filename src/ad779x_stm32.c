@@ -71,7 +71,7 @@ static int spi_wait_rxne()
 	return !t;
 }
 
-static void spi_tx(unsigned char Data)
+void spi_tx(unsigned char Data)
 {
 	spi_wait_txe();
 	SPI_I2S_ClearFlag(AD779X_SPI, SPI_I2S_FLAG_RXNE);
