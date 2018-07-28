@@ -124,10 +124,11 @@ void vChatTask(void *vpars)
 
 		} else if (strcmp(tk, cmd_list[CMD_ADC_INIT]) == 0) {
 			adc_ret = ad779x_stm32_init();
-			sniprintf(s, sizeof(s), "%d / %d\r\n", adc_ret, spi_err);
+			sniprintf(s, sizeof(s), "ret=%d, spi=%d, rx=%02x\r\n",
+				adc_ret, spi_err, ADCDevice.dbg);
 		} else if (strcmp(tk, cmd_list[CMD_ADC]) == 0) {
 			int i = 0;
-			unsigned long x;
+			long x;
 
 			if (adc_ret) {
 				sniprintf(s, sizeof(s),
@@ -138,7 +139,10 @@ void vChatTask(void *vpars)
 			if (tk)
 				i = atoi(tk);
 			x = ad779x_stm32_read(i);
-			sniprintf(s, sizeof(s), "%d 0x%x\r\n", i, x);
+			if (x < 0)
+				sniprintf(s, sizeof(s), "E: st=%x\r\n", ADCDevice.dbg);
+			else
+				sniprintf(s, sizeof(s), "%d 0x%x (st=%x)\r\n", i, x, ADCDevice.dbg);
 		} else if (strcmp(tk, cmd_list[CMD_SPI]) == 0) {
 			int x = 0;
 			char *_s = s;

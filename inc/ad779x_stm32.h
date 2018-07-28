@@ -1,6 +1,8 @@
 #ifndef AD779X_STM32_H
 #define AD779X_STM32_H
 
+#include <ad779x.h>
+
 #define AD779X_SPI	SPI1
 
 extern int spi_err;
