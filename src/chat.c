@@ -38,7 +38,7 @@ void vChatTask(void *vpars)
 	char *c;
 	char *tk;
 	int i = 0;
-	int adc_ret = ad779x_stm32_init();
+	int adc_ret = -1;
 
 	while (1) {
 		cdc_write_buf(&cdc_out, PROMPT, sizeof(PROMPT) - 1, 1);
