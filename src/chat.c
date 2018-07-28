@@ -187,7 +187,7 @@ void vChatTask(void *vpars)
 				}
 			}
 		} else
-			sniprintf(s, sizeof(s), "E: what?\r\n");
+			sniprintf(s, sizeof(s), "E: try `help`\r\n");
 out:
 		cdc_write_buf(&cdc_out, s, strlen(s), 1);
 	}
