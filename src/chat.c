@@ -16,6 +16,7 @@ enum {
 	CMD_DISP,
 	CMD_ADC_INIT,
 	CMD_ADC,
+	CMD_SPI_TEST,
 	CMD_SPI,
 
 	CMD_LAST
@@ -28,6 +29,7 @@ char *cmd_list[CMD_LAST] = {
 	"disp",
 	"adc_init",
 	"adc",
+	"spi_test",
 	"spi",
 };
 
@@ -138,6 +140,22 @@ void vChatTask(void *vpars)
 			x = ad779x_stm32_read(i);
 			sniprintf(s, sizeof(s), "%d 0x%x\r\n", i, x);
 		} else if (strcmp(tk, cmd_list[CMD_SPI]) == 0) {
+			int x = 0;
+			char *_s = s;
+
+			*_s = 0;
+
+			tk = _strtok(NULL, " \n\r");
+			if (tk)
+				x = strtol(tk, NULL, 0);
+
+			_s += sniprintf(_s, sizeof(s) - strlen(_s), "tx=%x ", x);
+
+			SPI_I2S_ReceiveData(AD779X_SPI);
+			spi_tx(x);
+			x = SPI_I2S_ReceiveData(AD779X_SPI);
+			sniprintf(_s, sizeof(s) - strlen(_s), "rx=%x\r\n", x);
+		} else if (strcmp(tk, cmd_list[CMD_SPI_TEST]) == 0) {
 			int n = 10000, x = 0xaa;
 
 			while (n--) {
