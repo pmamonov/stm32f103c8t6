@@ -3,6 +3,8 @@
 
 #define AD779X_SPI	SPI1
 
+extern int spi_err;
+
 int ad779x_stm32_init();
 unsigned long ad779x_stm32_read(int chan);
 

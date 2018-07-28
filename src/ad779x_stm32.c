@@ -5,6 +5,8 @@
 #include <stm32f10x_gpio.h>
 #include <stm32f10x_spi.h>
 
+int spi_err;
+
 static void spi_init(void)
 {
 	GPIO_InitTypeDef gpio;
@@ -36,6 +38,8 @@ static void spi_init(void)
 	SPI_SSOutputCmd(AD779X_SPI, DISABLE);
 	SPI_NSSInternalSoftwareConfig(SPI1, SPI_NSSInternalSoft_Set);
 	SPI_Cmd(AD779X_SPI, ENABLE);
+
+	spi_err = 0;
 }
 
 static int spi_wait_txe()
@@ -44,6 +48,8 @@ static int spi_wait_txe()
 
 	for (t = 10; t && !SPI_I2S_GetFlagStatus(AD779X_SPI, SPI_I2S_FLAG_TXE); t--)
 		vTaskDelay(1);
+
+	spi_err = t ? 0 : 1;
 
 	return !t;
 }
@@ -54,6 +60,8 @@ static int spi_wait_rxne()
 
 	for (t = 10; t && !SPI_I2S_GetFlagStatus(AD779X_SPI, SPI_I2S_FLAG_RXNE); t--)
 		vTaskDelay(1);
+
+	spi_err = t ? 0 : 2;
 
 	return !t;
 }
