@@ -18,6 +18,7 @@ enum {
 	CMD_ADC,
 	CMD_SPI_TEST,
 	CMD_SPI,
+	CMD_SPI_CS,
 
 	CMD_LAST
 };
@@ -31,6 +32,7 @@ char *cmd_list[CMD_LAST] = {
 	"adc",
 	"spi_test",
 	"spi",
+	"spi_cs",
 };
 
 void vChatTask(void *vpars)
@@ -143,6 +145,20 @@ void vChatTask(void *vpars)
 				sniprintf(s, sizeof(s), "E: st=%x\r\n", ADCDevice.dbg);
 			else
 				sniprintf(s, sizeof(s), "%d 0x%x (st=%x)\r\n", i, x, ADCDevice.dbg);
+		} else if (strcmp(tk, cmd_list[CMD_SPI_CS]) == 0) {
+			int en = GPIO_ReadOutputDataBit(GPIOA, GPIO_Pin_4);
+
+			tk = _strtok(NULL, " \n\r");
+			if (tk)
+				en = atoi(tk);
+
+			sniprintf(s, sizeof(s), "cs %d\r\n", !!en);
+
+			if (en)
+				GPIO_SetBits(GPIOA, GPIO_Pin_4);
+			else
+				GPIO_ResetBits(GPIOA, GPIO_Pin_4);
+
 		} else if (strcmp(tk, cmd_list[CMD_SPI]) == 0) {
 			int x = 0;
 			char *_s = s;
