@@ -16,16 +16,21 @@ static void spi_init(void)
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_SPI1, ENABLE);
 
-	gpio.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5 | GPIO_Pin_7;
+	gpio.GPIO_Pin = GPIO_Pin_5 | GPIO_Pin_7;
 	gpio.GPIO_Mode = GPIO_Mode_AF_PP;
-	gpio.GPIO_Speed = GPIO_Speed_10MHz;
+	gpio.GPIO_Speed = GPIO_Speed_2MHz;
+	GPIO_Init(GPIOA, &gpio);
+
+	gpio.GPIO_Pin = GPIO_Pin_4;
+	gpio.GPIO_Mode = GPIO_Mode_Out_PP;
+	gpio.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_Init(GPIOA, &gpio);
 
 	GPIO_SetBits(GPIOA, GPIO_Pin_4);
 
 	gpio.GPIO_Pin = GPIO_Pin_6;
 	gpio.GPIO_Mode = GPIO_Mode_IN_FLOATING ;
-	gpio.GPIO_Speed = GPIO_Speed_10MHz;
+	gpio.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_Init(GPIOA, &gpio);
 
 	SPI_StructInit(&spi);
@@ -35,7 +40,7 @@ static void spi_init(void)
 		SPI_BaudRatePrescaler_256; /* 4.5 MHz / 256 = 17.5 kHz */
 	spi.SPI_CPHA = SPI_CPHA_2Edge;
 	SPI_Init(AD779X_SPI, &spi);
-	SPI_SSOutputCmd(AD779X_SPI, DISABLE);
+	SPI_SSOutputCmd(AD779X_SPI, ENABLE);
 	SPI_NSSInternalSoftwareConfig(SPI1, SPI_NSSInternalSoft_Set);
 	SPI_Cmd(AD779X_SPI, ENABLE);
 
@@ -114,7 +119,7 @@ int ad779x_stm32_init()
 	AD779X_Reset();
 	AD779X_Init();
 	if (ADCDevice.SuState == susNoHW)
-		return 2;
+		return 1;
 
 	AD779X_SetClkSource(cssInt);
 	AD779X_SetUpdateRate(fs4_17_74dB);
@@ -122,11 +127,11 @@ int ad779x_stm32_init()
 	/* TODO: calibrate all channels */
 	AD779X_StartZSCalibration();
 	if (wait_ready())
-		return 3;
+		return 2;
 
 	AD779X_StartFSCalibration();
 	if (wait_ready())
-		return 4;
+		return 3;
 
 	AD779X_SetMode(mdsIdle);
 
