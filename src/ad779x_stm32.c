@@ -82,6 +82,7 @@ void spi_tx(unsigned char Data)
 
 static unsigned char spi_rx(void)
 {
+	SPI_I2S_ReceiveData(AD779X_SPI);
 	spi_tx(0);
 	return SPI_I2S_ReceiveData(AD779X_SPI);
 }
