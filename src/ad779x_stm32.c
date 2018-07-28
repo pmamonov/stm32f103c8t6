@@ -35,10 +35,13 @@ static void spi_init(void)
 
 	SPI_StructInit(&spi);
 	spi.SPI_Mode = SPI_Mode_Master;
+	spi.SPI_CPOL = SPI_CPOL_High;
+	spi.SPI_CPHA = SPI_CPHA_2Edge;
+  	spi.SPI_FirstBit = SPI_FirstBit_MSB;
 	spi.SPI_NSS = SPI_NSS_Soft;
 	spi.SPI_BaudRatePrescaler =
 		SPI_BaudRatePrescaler_256; /* 4.5 MHz / 256 = 17.5 kHz */
-	spi.SPI_CPHA = SPI_CPHA_2Edge;
+
 	SPI_Cmd(AD779X_SPI, DISABLE);
 	SPI_Init(AD779X_SPI, &spi);
 	SPI_SSOutputCmd(AD779X_SPI, ENABLE);
