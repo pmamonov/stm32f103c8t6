@@ -125,7 +125,7 @@ int ad779x_stm32_init()
 
 	AD779X_SetClkSource(cssInt);
 	AD779X_SetUpdateRate(fs4_17_74dB);
-
+#if 0
 	/* TODO: calibrate all channels */
 	AD779X_StartZSCalibration();
 	if (wait_ready())
@@ -134,7 +134,7 @@ int ad779x_stm32_init()
 	AD779X_StartFSCalibration();
 	if (wait_ready())
 		return 3;
-
+#endif
 	AD779X_SetMode(mdsIdle);
 
 	return 0;
