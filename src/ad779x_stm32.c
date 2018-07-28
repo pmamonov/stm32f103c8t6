@@ -134,7 +134,7 @@ int ad779x_stm32_init()
 	if (wait_ready())
 		return 3;
 #endif
-	AD779X_SetMode(mdsIdle);
+	AD779X_SetMode(mdsContinuous);
 
 	return 0;
 }
@@ -143,7 +143,6 @@ unsigned long ad779x_stm32_read(int chan)
 {
 	/* TODO: select chan */
 
-	AD779X_SetMode(mdsSingle);
 	if (wait_ready())
 		return -1;
 
