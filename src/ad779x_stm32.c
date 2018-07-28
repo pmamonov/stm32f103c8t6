@@ -26,7 +26,7 @@ static void spi_init(void)
 	gpio.GPIO_Speed = GPIO_Speed_2MHz;
 	GPIO_Init(GPIOA, &gpio);
 
-	GPIO_SetBits(GPIOA, GPIO_Pin_4);
+	GPIO_ResetBits(GPIOA, GPIO_Pin_4);
 
 	gpio.GPIO_Pin = GPIO_Pin_6;
 	gpio.GPIO_Mode = GPIO_Mode_IN_FLOATING ;
@@ -92,10 +92,6 @@ static unsigned char spi_rx(void)
 
 static void spi_cs(unsigned char State)
 {
-	if (State == cssEnable)
-		GPIO_ResetBits(GPIOA, GPIO_Pin_4);
-	else
-		GPIO_SetBits(GPIOA, GPIO_Pin_4);
 }
 
 tAD779X_Device ADCDevice = {
