@@ -39,6 +39,7 @@ static void spi_init(void)
 	spi.SPI_BaudRatePrescaler =
 		SPI_BaudRatePrescaler_256; /* 4.5 MHz / 256 = 17.5 kHz */
 	spi.SPI_CPHA = SPI_CPHA_2Edge;
+	SPI_Cmd(AD779X_SPI, DISABLE);
 	SPI_Init(AD779X_SPI, &spi);
 	SPI_SSOutputCmd(AD779X_SPI, ENABLE);
 	SPI_NSSInternalSoftwareConfig(SPI1, SPI_NSSInternalSoft_Set);
