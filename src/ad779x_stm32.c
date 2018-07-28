@@ -78,14 +78,14 @@ static int spi_wait_rxne()
 void spi_tx(unsigned char Data)
 {
 	spi_wait_txe();
-	SPI_I2S_ClearFlag(AD779X_SPI, SPI_I2S_FLAG_RXNE);
 	SPI_I2S_SendData(AD779X_SPI, Data);
+	SPI_I2S_ClearFlag(AD779X_SPI, SPI_I2S_FLAG_RXNE);
+	SPI_I2S_ReceiveData(AD779X_SPI);
 	spi_wait_rxne();
 }
 
 static unsigned char spi_rx(void)
 {
-	SPI_I2S_ReceiveData(AD779X_SPI);
 	spi_tx(0);
 	return SPI_I2S_ReceiveData(AD779X_SPI);
 }
