@@ -115,6 +115,8 @@ static int wait_ready()
 
 int ad779x_stm32_init()
 {
+	tAD779X_ConfigRegister cfg;
+
 	spi_init();
 
 	AD779X_Reset();
@@ -124,6 +126,9 @@ int ad779x_stm32_init()
 
 	AD779X_SetClkSource(cssInt);
 	AD779X_SetUpdateRate(fs4_17_74dB);
+	cfg.DATA = AD779X_RDV_CONFIG;
+	cfg.GAIN = 0;
+	AD779X_WriteConfigRegister(cfg.DATA);
 #if 0
 	/* TODO: calibrate all channels */
 	AD779X_StartZSCalibration();
