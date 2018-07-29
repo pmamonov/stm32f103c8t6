@@ -134,6 +134,7 @@ int ad779x_stm32_init()
 	AD779X_SetUpdateRate(fs4_17_74dB);
 	cfg.DATA = AD779X_RDV_CONFIG;
 	cfg.GAIN = 0;
+	cfg.UB = 1;
 	AD779X_WriteConfigRegister(cfg.DATA);
 #if 0
 	/* TODO: calibrate all channels */
