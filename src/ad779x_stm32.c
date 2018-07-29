@@ -113,10 +113,16 @@ static int wait_ready()
 	return 0;
 }
 
+static tAD779X_ConfigRegister cfg;
+
+static void set_chan(int i)
+{
+	cfg.CHSEL = i & AD779X_CONFIG_CHSEL;
+	AD779X_WriteConfigRegister(cfg.DATA);
+}
+
 int ad779x_stm32_init()
 {
-	tAD779X_ConfigRegister cfg;
-
 	spi_init();
 
 	AD779X_Reset();
@@ -146,7 +152,7 @@ int ad779x_stm32_init()
 
 unsigned long ad779x_stm32_read(int chan)
 {
-	/* TODO: select chan */
+	set_chan(chan);
 
 	if (wait_ready())
 		return -1;
