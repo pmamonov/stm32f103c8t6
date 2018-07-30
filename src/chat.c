@@ -65,11 +65,13 @@ void vChatTask(void *vpars)
 
 		} else if (strcmp(tk, cmd_list[CMD_HELP]) == 0) {
 			int i;
-			char *_s = s;
 
-			for (i = 0; i < CMD_LAST; i++)
-				_s += sniprintf(_s, sizeof(s) - strlen(s),
-						"%s\r\n", cmd_list[i]);
+			for (i = 0; i < CMD_LAST; i++) {
+				char *_s = cmd_list[i];
+
+				cdc_write_buf(&cdc_out, _s, strlen(_s), 1);
+				cdc_write_buf(&cdc_out, "\r\n", 2, 1);
+			}
 
 		} else if (strcmp(tk, cmd_list[CMD_DATE]) == 0) {
 			sniprintf(s, sizeof(s), "%d\r\n", xTaskGetTickCount());
