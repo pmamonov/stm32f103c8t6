@@ -28,6 +28,7 @@ OBJ = src/startup_stm32f10x_md.o \
   src/chat.o \
   src/flash.o \
   src/main.o \
+  src/gpio.o \
   src/hw_config.o\
   src/stm32_it.o\
   src/system_stm32f10x.o\
