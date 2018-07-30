@@ -6,6 +6,7 @@
 #include "lcd.h"
 #include "ad779x_stm32.h"
 #include <stm32f10x_spi.h>
+#include <gpio.h>
 
 #define PROMPT	"> "
 
@@ -19,6 +20,7 @@ enum {
 	CMD_SPI_TEST,
 	CMD_SPI,
 	CMD_SPI_CS,
+	CMD_GPIO,
 
 	CMD_LAST
 };
@@ -33,6 +35,7 @@ char *cmd_list[CMD_LAST] = {
 	"spi_test",
 	"spi",
 	"spi_cs",
+	"gpio",
 };
 
 void vChatTask(void *vpars)
@@ -43,6 +46,8 @@ void vChatTask(void *vpars)
 	char *tk;
 	int i = 0;
 	int adc_ret = -1;
+
+	gpio_init();
 
 	while (1) {
 		cdc_write_buf(&cdc_out, PROMPT, sizeof(PROMPT) - 1, 1);
@@ -186,6 +191,20 @@ void vChatTask(void *vpars)
 					goto out;
 				}
 			}
+		} else if (strcmp(tk, cmd_list[CMD_GPIO]) == 0) {
+			int i = 0, v;
+
+			tk = _strtok(NULL, " \n\r");
+			if (tk)
+				i = atoi(tk);
+			tk = _strtok(NULL, " \n\r");
+			if (tk) {
+				v = !!atoi(tk);
+				gpio_set_val(i, v);
+			} else {
+				v = gpio_out_get(i);
+			}
+			sniprintf(s, sizeof(s), "%d: %d\r\n", i, v);
 		} else
 			sniprintf(s, sizeof(s), "E: try `help`\r\n");
 out:
