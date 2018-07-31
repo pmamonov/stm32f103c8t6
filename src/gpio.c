@@ -78,7 +78,7 @@ int gpio_set_val(unsigned int i, unsigned int v)
 {
 	struct gpio *g = &gpios[i];
 
-	if (i > ARRAY_SIZE(gpios))
+	if (i >= ARRAY_SIZE(gpios))
 		return 1;
 
 	GPIO_WriteBit(g->port, g->pin, v ? Bit_SET : Bit_RESET);
@@ -88,7 +88,7 @@ int gpio_out_get(unsigned int i)
 {
 	struct gpio *g = &gpios[i];
 
-	if (i > ARRAY_SIZE(gpios))
+	if (i >= ARRAY_SIZE(gpios))
 		return -1;
 	return !!GPIO_ReadOutputDataBit(g->port, g->pin);
 }
