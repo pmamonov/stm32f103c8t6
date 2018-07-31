@@ -33,6 +33,11 @@ class aquarium:
 			except:
 				raise NameError, "`%s`" % l
 
+	def gpio(self, i, v):
+		self.s.write("gpio %d %d\r" % (i, v))
+		self.s.readline()
+		print >>sys.stderr, "I: `%s`" % self.s.readline().strip()
+
 if __name__ == "__main__":
 	a = aquarium()
 	while 1:
