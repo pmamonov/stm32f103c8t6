@@ -18,10 +18,10 @@ class aquarium:
 		self.s.write("adc_init\r")
 		self.s.read(1024)
 
-	
+
 	def adc(self, i):
 		while 1:
-			self.s.write("adc %d\r")
+			self.s.write("adc %d\r" % i)
 			self.s.readline()
 			l = self.s.readline()
 			try:
@@ -32,7 +32,7 @@ class aquarium:
 				continue
 			except:
 				raise NameError, "`%s`" % l
-		
+
 if __name__ == "__main__":
 	a = aquarium()
 	while 1:
