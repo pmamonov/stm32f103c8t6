@@ -84,6 +84,12 @@ int gpio_set_val(unsigned int i, unsigned int v)
 	GPIO_WriteBit(g->port, g->pin, v ? Bit_SET : Bit_RESET);
 }
 
+int gpio_set_val_timeout(unsigned int i, unsigned int v, unsigned int timeout)
+{
+	gpios[i].timeout = xTaskGetTickCount() + timeout;
+	gpio_set_val(i, v);
+};
+
 int gpio_out_get(unsigned int i)
 {
 	struct gpio *g = &gpios[i];
@@ -91,4 +97,19 @@ int gpio_out_get(unsigned int i)
 	if (i >= ARRAY_SIZE(gpios))
 		return -1;
 	return !!GPIO_ReadOutputDataBit(g->port, g->pin);
+}
+
+void gpio_reset_task(void *vpars)
+{
+	int i;
+
+	while (1) {
+		portTickType t = xTaskGetTickCount();
+
+		for (i = 0; i < ARRAY_SIZE(gpios); i++) {
+			if (gpio_out_get(i) > 0 && t >= gpios[i].timeout)
+				gpio_set_val(i, 0);
+		}
+		vTaskDelay(10);
+	}
 }
