@@ -121,7 +121,7 @@ static void set_chan(int i)
 	AD779X_WriteConfigRegister(cfg.DATA);
 }
 
-int ad779x_stm32_init()
+int ad779x_stm32_init(int ub)
 {
 	spi_init();
 
@@ -134,7 +134,7 @@ int ad779x_stm32_init()
 	AD779X_SetUpdateRate(fs4_17_74dB);
 	cfg.DATA = AD779X_RDV_CONFIG;
 	cfg.GAIN = 0;
-	cfg.UB = 1;
+	cfg.UB = ub ? 1 : 0;
 	AD779X_WriteConfigRegister(cfg.DATA);
 #if 0
 	/* TODO: calibrate all channels */

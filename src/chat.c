@@ -132,7 +132,13 @@ void vChatTask(void *vpars)
 			lcd_setstr(l, o, tk);
 
 		} else if (strcmp(tk, cmd_list[CMD_ADC_INIT]) == 0) {
-			adc_ret = ad779x_stm32_init();
+			int ub = 1;
+
+			tk = _strtok(NULL, " \n\r");
+			if (tk)
+				ub = atoi(tk);
+			adc_ret = ad779x_stm32_init(ub);
+
 			sniprintf(s, sizeof(s), "ret=%d, spi=%d, rx=%02x\r\n",
 				adc_ret, spi_err, ADCDevice.dbg);
 		} else if (strcmp(tk, cmd_list[CMD_ADC]) == 0) {

@@ -7,7 +7,7 @@
 
 extern int spi_err;
 
-int ad779x_stm32_init();
+int ad779x_stm32_init(int);
 unsigned long ad779x_stm32_read(int chan);
 void spi_tx(unsigned char Data);
 
