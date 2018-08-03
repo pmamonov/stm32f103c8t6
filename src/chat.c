@@ -207,8 +207,17 @@ void vChatTask(void *vpars)
 				i = atoi(tk);
 			tk = _strtok(NULL, " \n\r");
 			if (tk) {
+				unsigned int timeout = 1000;
+
 				v = !!atoi(tk);
-				gpio_set_val(i, v);
+
+				tk = _strtok(NULL, " \n\r");
+				if (tk)
+					timeout = atoi(tk);
+				if (!timeout)
+					timeout = 1000;
+
+				gpio_set_val_timeout(i, v, timeout);
 			} else {
 				v = gpio_out_get(i);
 			}
