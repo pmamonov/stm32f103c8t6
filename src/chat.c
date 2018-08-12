@@ -132,12 +132,15 @@ void vChatTask(void *vpars)
 			lcd_setstr(l, o, tk);
 
 		} else if (strcmp(tk, cmd_list[CMD_ADC_INIT]) == 0) {
-			int ub = 1;
+			int ub = 1, gain = 0;
 
 			tk = _strtok(NULL, " \n\r");
 			if (tk)
 				ub = atoi(tk);
-			adc_ret = ad779x_stm32_init(ub);
+			tk = _strtok(NULL, " \n\r");
+			if (tk)
+				gain = atoi(tk);
+			adc_ret = ad779x_stm32_init(ub, gain);
 
 			sniprintf(s, sizeof(s), "ret=%d, spi=%d, rx=%02x\r\n",
 				adc_ret, spi_err, ADCDevice.dbg);
