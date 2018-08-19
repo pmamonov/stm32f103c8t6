@@ -70,26 +70,34 @@ def reference():
   
 # function decides what power should be supplied to each channel
 def power():
-  cT = array(T)[-120:,:].mean(0) # current temperature
+  cT = array(T)[-int(PDR*60/prd):,:].mean(0) # current temperature
   WTA.write(ctime()+'\t %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f\n' % tuple(cT))
   WTA.flush()
   print ctime()
   print '   curent T: %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f' % tuple(cT)
   print 'reference T: %6.3f %6.3f %6.3f %6.3f %6.3f %6.3f' % tuple(rT)
   dT1 = rT - cT     # current gradients that are equal to the target heating rate (K per hour)
-  dT0 = polyfit(linspace(5./3600,1./6,120), array(T)[-120:,:], 1)[0,:]  # the real temperature evolution K per hour
+  dT0 = polyfit(linspace(prd/3600,PRD/60.0,int(PRD*60/prd)), array(T)[-int(PRD*60/prd):,:], 1)[0,:]  # the real temperature evolution K per hour
   # it tryes to reach the target temperature T in one hour
   for p in range(6):
     PW[p] = (3600.0*PW[p] + C[p]*(dT1[p]-dT0[p]))/3600.0  # power in W
-    PW[p] = PW[p]*(PW[p] <= 120) + 120*(PW[p] > 120) # if the requested power exceeds the capacity of the heater
-    PW[p] = PW[p]*(PW[p] > 0) # if the power is negative
+    PW[p] = PW[p]*(PW[p] <= 120) + 120*(PW[p] > 120) # if the requested power exceeds the capacity of the heater (120W)
+    PW[p] = PW[p]*(PW[p] > 0) # if the power is negative, that is usual if it cools down too slow
   WP.write(ctime()+'\t %6.2f %6.2f %6.2f %6.2f %6.2f %6.2f\n' % tuple(PW))
   WP.flush()
   print ' '
   print 'heat power:  %6.2f %6.2f %6.2f %6.2f %6.2f %6.2f' % tuple(PW)
 
-# THIS IS THE MAIN BODY OF THE PROGRAMM
 
+#########################################
+#                                       #
+# THIS IS THE MAIN BODY OF THE PROGRAMM #
+#                                       #
+#########################################
+
+# main settings!!!!
+prd = 5.0  # period (sec) of the temperature measuring and the heaters switching ON
+PRD = 20   # period (min) of the derivatives calculation and heat power decision making
 # common variables definition
 AQ = aquarium()
 T = []                                     # actual temperature
@@ -103,23 +111,23 @@ nameP  = 'Power'
 bkpname = ctime().split()[1]+'-'+ctime().split()[2]+'-bkp'
 
 # full temperature
-if os.path.isfile(nameTF+'.log')
+if os.path.isfile(nameTF+'.log'):
   n = 0
   while os.path.isfile(nameTF+'-'+bkpname+'-%d.log' % n):
     n += 1
-  os.system('cp '+nameTF+'.log'+nameTF+'-'+bkpname+'-%d.log' % n)
+  os.system('cp '+nameTF+'.log '+nameTF+'-'+bkpname+'-%d.log' % n)
 WTF = open(nameTF+'.log','w')
 
 # averaged temperature
-if os.path.isfile(nameTA+'.log')
+if os.path.isfile(nameTA+'.log'):
   n = 0
   while os.path.isfile(nameTA+'-'+bkpname+'-%d.log' % n):
     n += 1
-  os.system('cp '+nameTA+'.log 'nameTA+'-'+bkpname+'-%d.log' % n)
+  os.system('cp '+nameTA+'.log '+nameTA+'-'+bkpname+'-%d.log' % n)
 WTA = open(nameTA+'.log','w')
 
 # power
-if os.path.isfile(nameP+'.log')
+if os.path.isfile(nameP+'.log'):
   # initial power of the heaters
   F = open(nameP+'.log','r')
   lines = F.readlines()
@@ -151,7 +159,6 @@ L  = loadtxt('../reference/L-smooth.log', dtype='str')
 reference()
 
 # MAIN WHILE
-prd = 5.0
 wake = time()
 c = 0
 while True:
