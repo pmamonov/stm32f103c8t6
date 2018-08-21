@@ -12,14 +12,15 @@ enum {
 	CMD_VER,
 	CMD_DATE,
 	CMD_DISP,
+
 	CMD_LAST
 };
 
 char *cmd_list[CMD_LAST] = {
-	"help",
-	"ver",
-	"date",
-	"disp",
+	[CMD_HELP] =	"help",
+	[CMD_VER] =	"ver",
+	[CMD_DATE] =	"date",
+	[CMD_DISP] =	"disp",
 };
 
 void vChatTask(void *vpars)
