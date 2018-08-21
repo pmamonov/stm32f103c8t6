@@ -5,6 +5,7 @@
 #include "version.h"
 #include "lcd.h"
 #include "counter.h"
+#include "adc.h"
 
 #define PROMPT	"> "
 
@@ -15,6 +16,7 @@ enum {
 	CMD_DATE,
 	CMD_DISP,
 	CMD_CNT,
+	CMD_ADC,
 
 	CMD_LAST
 };
@@ -26,7 +28,10 @@ char *cmd_list[CMD_LAST] = {
 	[CMD_DATE] =	"date",
 	[CMD_DISP] =	"disp",
 	[CMD_CNT] =	"cnt",
+	[CMD_ADC] =	"adc",
 };
+
+#define ADC_NCH		4	/* A0..A3 */
 
 void vChatTask(void *vpars)
 {
@@ -36,6 +41,8 @@ void vChatTask(void *vpars)
 	char *tk;
 	int i = 0;
 	int echo = 1;
+
+	adc_init((1 << ADC_NCH) - 1);
 
 	while (1) {
 		if (echo)
@@ -137,6 +144,15 @@ void vChatTask(void *vpars)
 				cdc_write_buf(&cdc_out, s, strlen(s), 1);
 			}
 			sniprintf(s, sizeof(s), "\r\n");
+		} else if (strcmp(tk, cmd_list[CMD_ADC]) == 0) {
+			int i = 0;
+
+			tk = _strtok(NULL, " \n\r");
+			if (tk)
+				i = atoi(tk);
+			if (i < 0 || i >= ADC_NCH)
+				i = 0;
+			sniprintf(s, sizeof(s), "%d: 0x%x\r\n", i, adc_get(i));
 		} else
 			sniprintf(s, sizeof(s), "E: try `help`\r\n");
 out:
