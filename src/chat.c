@@ -9,6 +9,7 @@
 
 enum {
 	CMD_HELP = 0,
+	CMD_ECHO,
 	CMD_VER,
 	CMD_DATE,
 	CMD_DISP,
@@ -18,6 +19,7 @@ enum {
 
 char *cmd_list[CMD_LAST] = {
 	[CMD_HELP] =	"help",
+	[CMD_ECHO] =	"echo",
 	[CMD_VER] =	"ver",
 	[CMD_DATE] =	"date",
 	[CMD_DISP] =	"disp",
@@ -30,22 +32,26 @@ void vChatTask(void *vpars)
 	char *c;
 	char *tk;
 	int i = 0;
+	int echo = 1;
 
 	while (1) {
-		cdc_write_buf(&cdc_out, PROMPT, sizeof(PROMPT) - 1, 1);
+		if (echo)
+			cdc_write_buf(&cdc_out, PROMPT, sizeof(PROMPT) - 1, 1);
 		memset(cmd, 0, sizeof(cmd));
 		c = cmd;
 
 		while (1) {
 			i = cdc_read_buf(&cdc_in, c, 1);
-			if (i)
-				cdc_write_buf(&cdc_out, c, 1, 1);
-			else {
+			if (i) {
+				if (echo)
+					cdc_write_buf(&cdc_out, c, 1, 1);
+			} else {
 				vTaskDelay(10);
 				continue;
 			}
 			if (*c == '\r') {
-				cdc_write_buf(&cdc_out, "\n", 1, 1);
+				if (echo)
+					cdc_write_buf(&cdc_out, "\n", 1, 1);
 				break;
 			}
 			if (*c == 8) { /* backspace */
@@ -64,6 +70,15 @@ void vChatTask(void *vpars)
 		if (strcmp(tk, cmd_list[CMD_VER]) == 0) {
 			sniprintf(s, sizeof(s), "%s\r\n", __VERSION);
 
+		} else if (strcmp(tk, cmd_list[CMD_ECHO]) == 0) {
+			int i = 1;
+
+			tk = _strtok(NULL, " \n\r");
+			if (tk)
+				i = atoi(tk);
+
+			echo = !!i;
+			sniprintf(s, sizeof(s), "echo %d\r\n", echo);
 		} else if (strcmp(tk, cmd_list[CMD_HELP]) == 0) {
 			int i;
 
