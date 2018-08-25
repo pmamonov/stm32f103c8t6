@@ -64,7 +64,7 @@ void vChatTask(void *vpars)
 				c += 1;
 		};
 
-		sniprintf(s, sizeof(s), "OK\r\n");
+		sniprintf(s, sizeof(s), "\r\n");
 		tk = _strtok(cmd, " \n\r");
 
 		if (strcmp(tk, cmd_list[CMD_VER]) == 0) {
