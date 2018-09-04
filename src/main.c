@@ -14,6 +14,7 @@
 #include "lcd.h"
 #include "flash.h"
 #include "pwm.h"
+#include "gpio.h"
 
 #define USB_DP_PU_RCC	RCC_APB2Periph_GPIOA
 #define USB_DP_PU_GPIO	GPIOA
@@ -46,10 +47,15 @@ int main(void)
 
 	pwm_init_all(10000);
 
+	gpio_init();
+
 	err = xTaskCreate(vBlinkTask, "blink", 64, NULL,
 			  tskIDLE_PRIORITY + 1, NULL );
 
 	err = xTaskCreate(vChatTask, "chat", 256, NULL,
+			  tskIDLE_PRIORITY + 1, NULL );
+
+	err = xTaskCreate(gpio_poll_task, "gpio-poll", 256, NULL,
 			  tskIDLE_PRIORITY + 1, NULL );
 
 	vTaskStartScheduler();
