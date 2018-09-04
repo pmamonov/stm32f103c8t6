@@ -3,6 +3,9 @@
 #include "stm32f10x_tim.h"
 #include "pwm.h"
 
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+#define NPWM	ARRAY_SIZE(pwm_list)
+
 extern uint32_t SystemCoreClock;
 
 struct pwm {
@@ -24,8 +27,8 @@ struct pwm {
 	void (*init)(TIM_TypeDef *, TIM_OCInitTypeDef *);
 };
 
-static struct pwm pwm_list[NPWM] = {
-	[PWM0] = {
+static struct pwm pwm_list[] = {
+/*	[0] = {
 		.gpio = GPIOA,
 		.gpio_pin = GPIO_Pin_8,
 		.gpio_rcc = RCC_APB2Periph_GPIOA,
@@ -39,7 +42,7 @@ static struct pwm pwm_list[NPWM] = {
 		.tim_rcc_init = RCC_APB2PeriphClockCmd,
 		.init = TIM_OC1Init,
 	},
-	[PWM1] = {
+	[1] = {
 		.gpio = GPIOA,
 		.gpio_pin = GPIO_Pin_9,
 		.gpio_rcc = RCC_APB2Periph_GPIOA,
@@ -52,24 +55,15 @@ static struct pwm pwm_list[NPWM] = {
 		.tim_rcc = RCC_APB2Periph_TIM1,
 		.tim_rcc_init = RCC_APB2PeriphClockCmd,
 		.init = TIM_OC2Init,
-	},
-	[PWM2] = {
-		.gpio = GPIOA,
-		.gpio_pin = GPIO_Pin_10,
-		.gpio_rcc = RCC_APB2Periph_GPIOA,
-		.gpio_rcc_init = RCC_APB2PeriphClockCmd,
-
-		.afio_rcc = RCC_APB2Periph_AFIO,
-		.afio_rcc_init = RCC_APB2PeriphClockCmd,
-
-		.tim = TIM1,
-		.tim_rcc = RCC_APB2Periph_TIM1,
-		.tim_rcc_init = RCC_APB2PeriphClockCmd,
-		.init = TIM_OC3Init,
-	},
+	}, */
 };
 
-int pwm_init(enum pwm_id id, unsigned int hz)
+int pwm_count()
+{
+	return NPWM;
+}
+
+int pwm_init(int id, unsigned int hz)
 {
 	struct pwm *pwm;
 	TIM_TimeBaseInitTypeDef ts;
@@ -106,7 +100,15 @@ int pwm_init(enum pwm_id id, unsigned int hz)
 	return 0;
 }
 
-int pwm_set(enum pwm_id id, unsigned int dc)
+int pwm_init_all(unsigned int hz)
+{
+	int i;
+
+	for (i = 0; i < NPWM; i++)
+		pwm_init(i, hz);
+}
+
+int pwm_set(int id, unsigned int dc)
 {
 	struct pwm *pwm;
 	TIM_OCInitTypeDef  ocs;
