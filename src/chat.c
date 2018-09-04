@@ -35,7 +35,7 @@ void vChatTask(void *vpars)
 	char *c;
 	char *tk;
 	int i = 0;
-	int echo = 1;
+	int echo = 0;
 
 	while (1) {
 		if (echo)
