@@ -9,16 +9,70 @@
 #define GPIO_POLL_DELAY	100
 
 struct gpio gpios[] = {
-/*
 	[0] = {
 		.port		= GPIOB,
-		.pin		= GPIO_Pin_10,
+		.pin		= GPIO_Pin_12,
 		.speed		= GPIO_Speed_10MHz,
-		.mode		= GPIO_Mode_Out_PP,
+		.mode		= GPIO_Mode_IPD,
 		.clk		= RCC_APB2Periph_GPIOB,
 		.clk_cmd	= RCC_APB2PeriphClockCmd,
 	},
-*/
+	[1] = {
+		.port		= GPIOB,
+		.pin		= GPIO_Pin_13,
+		.speed		= GPIO_Speed_10MHz,
+		.mode		= GPIO_Mode_IPD,
+		.clk		= RCC_APB2Periph_GPIOB,
+		.clk_cmd	= RCC_APB2PeriphClockCmd,
+	},
+	[2] = {
+		.port		= GPIOB,
+		.pin		= GPIO_Pin_14,
+		.speed		= GPIO_Speed_10MHz,
+		.mode		= GPIO_Mode_IPD,
+		.clk		= RCC_APB2Periph_GPIOB,
+		.clk_cmd	= RCC_APB2PeriphClockCmd,
+	},
+	[3] = {
+		.port		= GPIOB,
+		.pin		= GPIO_Pin_15,
+		.speed		= GPIO_Speed_10MHz,
+		.mode		= GPIO_Mode_IPD,
+		.clk		= RCC_APB2Periph_GPIOB,
+		.clk_cmd	= RCC_APB2PeriphClockCmd,
+	},
+	[4] = {
+		.port		= GPIOB,
+		.pin		= GPIO_Pin_6,
+		.speed		= GPIO_Speed_10MHz,
+		.mode		= GPIO_Mode_IPD,
+		.clk		= RCC_APB2Periph_GPIOB,
+		.clk_cmd	= RCC_APB2PeriphClockCmd,
+	},
+	[5] = {
+		.port		= GPIOB,
+		.pin		= GPIO_Pin_7,
+		.speed		= GPIO_Speed_10MHz,
+		.mode		= GPIO_Mode_IPD,
+		.clk		= RCC_APB2Periph_GPIOB,
+		.clk_cmd	= RCC_APB2PeriphClockCmd,
+	},
+	[6] = {
+		.port		= GPIOB,
+		.pin		= GPIO_Pin_10,
+		.speed		= GPIO_Speed_10MHz,
+		.mode		= GPIO_Mode_IPD,
+		.clk		= RCC_APB2Periph_GPIOB,
+		.clk_cmd	= RCC_APB2PeriphClockCmd,
+	},
+	[7] = {
+		.port		= GPIOB,
+		.pin		= GPIO_Pin_11,
+		.speed		= GPIO_Speed_10MHz,
+		.mode		= GPIO_Mode_IPD,
+		.clk		= RCC_APB2Periph_GPIOB,
+		.clk_cmd	= RCC_APB2PeriphClockCmd,
+	},
 };
 
 static void gpio_init_one(struct gpio *g)
