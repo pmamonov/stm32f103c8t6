@@ -28,7 +28,7 @@ struct pwm {
 };
 
 static struct pwm pwm_list[] = {
-/*	[0] = {
+	[0] = {
 		.gpio = GPIOA,
 		.gpio_pin = GPIO_Pin_8,
 		.gpio_rcc = RCC_APB2Periph_GPIOA,
@@ -55,7 +55,35 @@ static struct pwm pwm_list[] = {
 		.tim_rcc = RCC_APB2Periph_TIM1,
 		.tim_rcc_init = RCC_APB2PeriphClockCmd,
 		.init = TIM_OC2Init,
-	}, */
+	},
+	[2] = {
+		.gpio = GPIOB,
+		.gpio_pin = GPIO_Pin_8,
+		.gpio_rcc = RCC_APB2Periph_GPIOB,
+		.gpio_rcc_init = RCC_APB2PeriphClockCmd,
+
+		.afio_rcc = RCC_APB2Periph_AFIO,
+		.afio_rcc_init = RCC_APB2PeriphClockCmd,
+
+		.tim = TIM4,
+		.tim_rcc = RCC_APB1Periph_TIM4,
+		.tim_rcc_init = RCC_APB1PeriphClockCmd,
+		.init = TIM_OC3Init,
+	},
+	[3] = {
+		.gpio = GPIOB,
+		.gpio_pin = GPIO_Pin_9,
+		.gpio_rcc = RCC_APB2Periph_GPIOB,
+		.gpio_rcc_init = RCC_APB2PeriphClockCmd,
+
+		.afio_rcc = RCC_APB2Periph_AFIO,
+		.afio_rcc_init = RCC_APB2PeriphClockCmd,
+
+		.tim = TIM4,
+		.tim_rcc = RCC_APB1Periph_TIM4,
+		.tim_rcc_init = RCC_APB1PeriphClockCmd,
+		.init = TIM_OC4Init,
+	},
 };
 
 int pwm_count()
