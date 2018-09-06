@@ -170,6 +170,7 @@ void vChatTask(void *vpars)
 				vTaskDelay(d);
 			}
 			pwm_set(c, dc);
+			s[0] = 0;
 		} else
 			sniprintf(s, sizeof(s), "E: try `help`\r\n");
 out:
