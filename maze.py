@@ -100,9 +100,10 @@ class msm:
 		self.rfid_ready = True
 		print "RFID: id=%s" % self.rfid_id
 
-	def get_state(self, gpio):
-		if gpio:
-			self.gpio_state = self.gate.gpio_poll(1)
+	def get_state(self, block):
+		if not block:
+			self.gate.s.write("gpio\r")
+		self.gpio_state = self.gate.gpio_poll(1)
 		self.pwm_state = self.gate.pwm_state
 		rfid_ready = self.rfid_ready
 		if self.rfid_ready:
