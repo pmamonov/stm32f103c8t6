@@ -73,6 +73,15 @@ struct gpio gpios[] = {
 		.clk		= RCC_APB2Periph_GPIOB,
 		.clk_cmd	= RCC_APB2PeriphClockCmd,
 	},
+
+	[8] = {
+		.port		= GPIOB,
+		.pin		= GPIO_Pin_5,
+		.speed		= GPIO_Speed_10MHz,
+		.mode		= GPIO_Mode_Out_PP,
+		.clk		= RCC_APB2Periph_GPIOB,
+		.clk_cmd	= RCC_APB2PeriphClockCmd,
+	},
 };
 
 static void gpio_init_one(struct gpio *g)
