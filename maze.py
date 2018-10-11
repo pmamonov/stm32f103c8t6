@@ -90,6 +90,7 @@ class msm:
 		self.rfid_ready = False
 		self.rfid_thread = None
 		self.rfid_id = ""
+		self.gate.s.write("gpio 8 1\r")
 		self.update()
 
 	def rfid_read(self):
@@ -109,6 +110,7 @@ class msm:
 		if self.rfid_ready:
 			self.rfid_ready = False
 			if self.rfid_thread:
+				self.gate.s.write("gpio 8 1\r")
 				self.rfid_thread.join()
 				self.rfid_thread = None
 				print "RFID: read finished"
@@ -137,6 +139,7 @@ class msm:
 					continue
 				if self.rfid_thread:
 					continue
+				self.gate.s.write("gpio 8 0\r")
 				self.rfid_thread = Thread(target=self.rfid_read)
 				self.rfid_thread.start()
 				print "RFID thread spawned"
