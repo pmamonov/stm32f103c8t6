@@ -5,6 +5,7 @@
 #include "version.h"
 #include "lcd.h"
 #include "pwm.h"
+#include "gpio.h"
 
 #define PROMPT	"> "
 
@@ -15,6 +16,7 @@ enum {
 	CMD_DATE,
 	CMD_DISP,
 	CMD_PWM,
+	CMD_GPIO,
 
 	CMD_LAST
 };
@@ -26,6 +28,7 @@ char *cmd_list[CMD_LAST] = {
 	[CMD_DATE] =	"date",
 	[CMD_DISP] =	"disp",
 	[CMD_PWM] =	"pwm",
+	[CMD_GPIO] =	"gpio",
 };
 
 void vChatTask(void *vpars)
@@ -171,6 +174,25 @@ void vChatTask(void *vpars)
 			}
 			pwm_set(c, dc);
 			s[0] = 0;
+		} else if (strcmp(tk, cmd_list[CMD_GPIO]) == 0) {
+			int g, v = 0;
+
+			tk = _strtok(NULL, " \n\r");
+			if (!tk) {
+				sniprintf(s, sizeof(s), "gpio: 0x%08x\r\n",
+					  gpio_in_get_all());
+				goto out;
+			}
+
+			s[0] = 0;
+			g = atoi(tk);
+
+			tk = _strtok(NULL, " \n\r");
+			if (!tk)
+				goto out;
+			v = atoi(tk);
+
+			gpio_set_val(g, v);
 		} else
 			sniprintf(s, sizeof(s), "E: try `help`\r\n");
 out:
