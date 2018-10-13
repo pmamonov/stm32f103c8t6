@@ -26,7 +26,7 @@ from threading import Thread
 from serial import Serial
 from time import sleep
 import re
-from time import time
+from time import time, strftime
 
 class tty(object):
 	s = None
@@ -60,6 +60,8 @@ class gate(tty):
 		self.ngpio = ngpio
 		self.gpio_state = tuple([0 for i in range(ngpio)]) 
 		self.pwm_state = [0 for i in range(npwm)]
+		self.s.write("echo 0\r")
+		self.s.readline()
 
 	def pwm(self, i, duty_cycle, warmup_ms=500):
 		self.s.write("pwm %d %d %d\r" % (i, warmup_ms, duty_cycle))
@@ -95,7 +97,7 @@ class msm:
 
 	def rfid_read(self):
 		self.rfid_id = ""
-		while len(self.rfid_id) == 0:
+		while len(self.rfid_id) < 5:
 		    print "RFID: start read"
 		    self.rfid_id = self.rfid.read().strip()
 		self.rfid_ready = True
@@ -163,7 +165,7 @@ class msm:
 
 		self.state = self.get_state(self.pstate != "reset")
 		while self.pstate != self.state:
-			print "%s -> %s" % (self.pstate, self.state)
+			print "%s: %s -> %s" % (strftime("%Y-%d-%m_%H:%M:%S"), self.pstate, self.state)
 			for rule in self.rules.keys():
 				n, p = rule.replace(" ", "").split("<")
 				if re.search(n, self.state) and re.search(p, self.pstate):
@@ -171,6 +173,7 @@ class msm:
 					self.apply(self.rules[rule])
 			self.pstate = self.state
 			self.state = self.get_state(0)
+			sys.stdout.flush()
 
 if __name__ == "__main__":
 	p = ArgumentParser(description="maze control")
