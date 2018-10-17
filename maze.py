@@ -165,7 +165,7 @@ class msm:
 
 		self.state = self.get_state(self.pstate != "reset")
 		while self.pstate != self.state:
-			print "%s: %s -> %s" % (strftime("%Y-%d-%m_%H:%M:%S"), self.pstate, self.state)
+			print "%s: %s -> %s" % (strftime("%Y-%m-%d %H:%M:%S"), self.pstate, self.state)
 			for rule in self.rules.keys():
 				n, p = rule.replace(" ", "").split("<")
 				if re.search(n, self.state) and re.search(p, self.pstate):
