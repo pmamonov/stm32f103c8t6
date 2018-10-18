@@ -3,18 +3,25 @@
 maze_state_machine = {
 #        Format:
 #
-#        "STATE_IN/STATE_OUT < STATE_IN/STATE_OUT": "CMD; CMD; ...",
+#        "TAG: STATE_IN/STATE_OUT < STATE_IN/STATE_OUT": "CMD; CMD; ...",
+#
+#        TAG: use `state` command to set TAG value
 #
 #        STATE = "x1d1x2d2_p1p2_R"
 #                 ^^^^^^^^ ^^^^ ^
 #                 SENSORS  PWM  RFID_READY
 #                               optional
-#	CMD = "pwmX S" (X=0..3, S=0,1), "rfid", "error", "reset T" (T = seconds)
+#        CMD = "pwmX S" (X=0..3, S=0,1),
+#              "rfid",
+#              "reset T" (T = seconds),
+#              "state TAG"
 #
-	"/ < reset":			"pwm0 0; pwm1 1; pwm2 0; pwm3 0",
-	"0010_01/ < ...0_01/":		"pwm0 1; pwm1 1; rfid",
-	"...._11_R/ < ...._.1/":	"pwm0 1; pwm1 0",
-	".000_10/ < .001_10/":		"pwm0 1; pwm1 1; reset 60",
+	": / < reset":			"state IN; pwm0 0; pwm1 1; pwm2 0; pwm3 0",
+	"IN: 0010_01/ < ...0_01/":	"state READ; pwm0 1; pwm1 1; rfid",
+	"READ: ...._11_R/ < ...._.1/":	"state OUT; pwm0 1; pwm1 0",
+	"OUT: .000_10/ < .001_10/":	"state WAIT; pwm0 1; pwm1 1; reset 60",
+	"WAIT: .1.._11/ < .0.._11/":	"state OUT; pwm0 1; pwm1 0; reset 0",
+	"WAIT: ..1._11/ < ..0._11/":	"state OUT; pwm0 1; pwm1 0; reset 0",
 }
 
 PWM_WARMUP_MS = 100
@@ -88,6 +95,7 @@ class msm:
 		self.gate = gate
 		self.rfid = rfid
 		self.state = "reset"
+		self._state = "RESET"
 		self.reset = 0
 		self.gpio_state = [0 for i in range(8)]
 		self.rfid_ready = False
@@ -153,7 +161,14 @@ class msm:
 				except:
 					print "bad command `%s`" % c
 					continue
-				self.reset = time() + t
+				self.reset = time() + t if t > 0 else 0
+			elif c[:5] == "state":
+				try:
+					t = c.split()[1]
+					self._state = t
+				except:
+					print "bad command `%s`" % c
+					continue
 			else:
 				print "unknown command `%s`" % c
 
@@ -166,9 +181,15 @@ class msm:
 
 		self.state = self.get_state(self.pstate != "reset")
 		while self.pstate != self.state:
-			print "%s: %s -> %s" % (strftime("%Y-%m-%d %H:%M:%S"), self.pstate, self.state)
+			print "%s: %s: %s -> %s" % (strftime("%Y-%m-%d %H:%M:%S"),
+						    self._state,
+						    self.pstate, self.state)
 			for rule in self.rules.keys():
-				n, p = rule.replace(" ", "").split("<")
+				s = rule.replace(" ", "")
+				t, r = s.split(":")
+				if len(t) and self._state != t:
+					continue
+				n, p = r.split("<")
 				if re.search(n, self.state) and re.search(p, self.pstate):
 					print "applying `%s` : `%s`" % (rule, self.rules[rule])
 					self.apply(self.rules[rule])
