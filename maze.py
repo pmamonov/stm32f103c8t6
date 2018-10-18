@@ -60,8 +60,9 @@ class gate(tty):
 		self.ngpio = ngpio
 		self.gpio_state = tuple([0 for i in range(ngpio)]) 
 		self.pwm_state = [0 for i in range(npwm)]
-		self.s.write("echo 0\r")
-		self.s.readline()
+		self.s.write("\recho 0\r")
+		sleep(1)
+		self.s.read_all()
 
 	def pwm(self, i, duty_cycle, warmup_ms=500):
 		self.s.write("pwm %d %d %d\r" % (i, warmup_ms, duty_cycle))
