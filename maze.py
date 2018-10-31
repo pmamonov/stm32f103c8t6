@@ -231,7 +231,7 @@ if __name__ == "__main__":
 	try:
 		while 1:
 			m.update()
-	except:
+	except KeyboardInterrupt:
 		print "FINISH"
 		m.run = False
 		if m.pwm_lock.locked():
