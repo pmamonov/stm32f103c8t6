@@ -26,10 +26,11 @@ maze_state_machine = {
 
 PWM_WARMUP_MS = 100
 PWM_DC = 30
+PWM_REFRESH_PERIOD = 2
 
 import sys
 from argparse import ArgumentParser
-from threading import Thread
+from threading import Thread, Lock
 from serial import Serial
 from time import sleep
 import re
@@ -91,6 +92,7 @@ class gate(tty):
 
 class msm:
 	def __init__(self, rules, gate, rfid):
+		self.pwm_lock = Lock()
 		self.rules = rules
 		self.gate = gate
 		self.rfid = rfid
@@ -103,10 +105,13 @@ class msm:
 		self.rfid_id = ""
 		self.gate.s.write("gpio 8 1\r")
 		self.update()
+		self.run = True
+		self.pwm_thread = Thread(target=self.pwm_refresh)
+		self.pwm_thread.start()
 
 	def rfid_read(self):
 		self.rfid_id = ""
-		while len(self.rfid_id) < 5:
+		while self.run and len(self.rfid_id) < 5:
 		    print "RFID: start read"
 		    self.rfid_id = self.rfid.read().strip()
 		self.rfid_ready = True
@@ -142,7 +147,10 @@ class msm:
 				except:
 					print "bad command `%s`" % c
 					continue
+
+				self.pwm_lock.acquire()
 				self.gate.pwm(i, PWM_DC if dc else 0, PWM_WARMUP_MS if dc else 0)
+				self.pwm_lock.release()
 				print "pwm %d %d" % (i, dc)
 			elif c == "rfid":
 				if not self.rfid:
@@ -197,6 +205,15 @@ class msm:
 			self.state = self.get_state(0)
 			sys.stdout.flush()
 
+	def pwm_refresh(self):
+		while self.run:
+			self.pwm_lock.acquire()
+			for i in range(len(self.gate.pwm_state)):
+				if self.gate.pwm_state[i]:
+					self.gate.pwm(i, PWM_DC, PWM_WARMUP_MS)
+			self.pwm_lock.release()
+			sleep(PWM_REFRESH_PERIOD)
+
 if __name__ == "__main__":
 	p = ArgumentParser(description="maze control")
 	p.add_argument('-g', dest="gate", metavar='/dev/ttyX',
@@ -211,5 +228,14 @@ if __name__ == "__main__":
 	r = rfid(a.rfid) if a.rfid else None
 	m = msm(maze_state_machine, g, r)
 
-	while 1:
-		m.update()
+	try:
+		while 1:
+			m.update()
+	except:
+		print "FINISH"
+		m.run = False
+		if m.pwm_lock.locked():
+			m.pwm_lock.release()
+		if m.rfid_thread:
+			m.rfid_thread.join()
+		m.pwm_thread.join()
