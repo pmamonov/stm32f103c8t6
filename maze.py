@@ -19,8 +19,7 @@ maze_state_machine = {
 	": / < reset":			"state IN; pwm0 0; pwm1 1; pwm2 0; pwm3 0",
 	"IN: 0010_01/ < ...0_01/":	"state READ; pwm0 1; pwm1 1; rfid",
 	"READ: ...._11_R/ < ...._.1/":	"state OUT; pwm0 1; pwm1 0",
-	"OUT: .000_10/ < .001_10/":	"state WAIT; pwm0 1; pwm1 1; reset 60",
-	"WAIT: .1.._11/ < .0.._11/":	"state OUT; pwm0 1; pwm1 0; reset 0",
+	"OUT: ..00_10/ < ..01_10/":	"state WAIT; pwm0 1; pwm1 1; reset 60",
 	"WAIT: ..1._11/ < ..0._11/":	"state OUT; pwm0 1; pwm1 0; reset 0",
 }
 
