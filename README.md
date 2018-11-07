@@ -1,3 +1,5 @@
+This software is part of the [ASPAM project](https://github.com/comcon1/ASPAM).
+
 ### Установка зависимостей / Install dependencies
 
 ```sh
