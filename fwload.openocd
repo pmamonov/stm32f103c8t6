@@ -1,7 +1,7 @@
 init
 reset init
 
-flash erase_sector 0 0 127
+flash erase_sector 0 0 63
 
 flash write_bank 0 main.bin 0
 reset run
