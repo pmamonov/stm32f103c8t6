@@ -5,6 +5,8 @@
 #include "task.h"
 #include <stm32f10x_gpio.h>
 
+#define GPIO_PWM_PERIOD	20
+
 struct gpio {
 	GPIO_TypeDef *port;
 	uint16_t pin;
@@ -13,6 +15,7 @@ struct gpio {
 	uint32_t clk;
 	void (*clk_cmd)(uint32_t, FunctionalState);
 	portTickType timeout;
+	int pwm;
 };
 
 int gpio_init();
@@ -21,5 +24,6 @@ int gpio_set_val_timeout(unsigned int, unsigned int, unsigned int);
 int gpio_out_get(unsigned int);
 int gpio_in_get(unsigned int);
 void gpio_reset_task(void *);
+void gpio_pwm_task(void *);
 
 #endif /* __GPIO_H__ */

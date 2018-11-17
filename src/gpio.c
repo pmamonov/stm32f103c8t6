@@ -73,3 +73,32 @@ void gpio_reset_task(void *vpars)
 		vTaskDelay(10);
 	}
 }
+
+void gpio_pwm_task(void *vpars)
+{
+	int ppwm = GPIO_PWM_PERIOD;
+	int i, j;
+
+	gpio_init();
+
+	for (i = 0; i < ARRAY_SIZE(gpios); i++)
+		gpios[i].pwm = ppwm / 2;
+
+	while (1) {
+		for (i = 0; i < ppwm; i++) {
+			for (j = 0; j < ARRAY_SIZE(gpios); j++) {
+				if (!i) {
+					if (gpios[j].pwm)
+						gpio_set_val(j, 1);
+					else
+						gpio_set_val(j, 0);
+				}
+
+				if (i > gpios[j].pwm)
+					gpio_set_val(j, 0);
+				
+			}
+			vTaskDelay(1);
+		}
+	}
+}
