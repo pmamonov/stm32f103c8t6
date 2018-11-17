@@ -134,6 +134,7 @@ void gpio_pwm_task(void *vpars)
 {
 	int ppwm = GPIO_PWM_PERIOD;
 	int i, j;
+	int d = 1, dd = 0, inc = 1;
 
 	gpio_init();
 
@@ -141,6 +142,16 @@ void gpio_pwm_task(void *vpars)
 		gpios[i].pwm = ppwm / 2;
 
 	while (1) {
+		if (!(dd++ % 10)) {
+			for (i = 0; i < ARRAY_SIZE(gpios); i++)
+				gpios[i].pwm = d % ppwm;
+			if (d + 1 >= ppwm)
+				inc = -1;
+			if (d == 1)
+				inc = 1;
+			d += inc;
+		}
+
 		for (i = 0; i < ppwm; i++) {
 			for (j = 0; j < ARRAY_SIZE(gpios); j++) {
 				if (!i) {
