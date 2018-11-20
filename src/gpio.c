@@ -142,15 +142,12 @@ void gpio_pwm_task(void *vpars)
 		gpios[i].pwm = ppwm / 2;
 
 	while (1) {
-		if (!(dd++ % 7)) {
+		if (!(dd++ % 5)) {
 			for (i = 0; i < ARRAY_SIZE(gpios); i++)
-				gpios[i].pwm = i == d ? ppwm - 1 :
-						i + inc == d ? ppwm / 2 :
-						i + 2 * inc == d ? ppwm / 3 :
-						i + 3 * inc == d ? ppwm / 4 :
-						i + 4 * inc == d ? ppwm / 5 :
-						i + 5 * inc == d ? ppwm / 6 :
-						i + 6 * inc == d ? ppwm / 7 :
+				gpios[i].pwm = i == d ? 8 :
+						i + inc == d ? 4 :
+						i + 2 * inc == d ? 2 :
+						i + 3 * inc == d ? 1 :
 						0;
 			if (d + 1 >= ARRAY_SIZE(gpios))
 				inc = -1;
