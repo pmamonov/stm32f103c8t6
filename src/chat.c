@@ -7,12 +7,18 @@
 
 #define PROMPT	"> "
 
+#define RX_TIMEOUT	100
+
+char rx_buf[4096];
+
 enum {
 	CMD_HELP = 0,
 	CMD_ECHO,
 	CMD_VER,
 	CMD_DATE,
 	CMD_DISP,
+	CMD_RX,
+	CMD_RXDUMP,
 
 	CMD_LAST
 };
@@ -23,6 +29,8 @@ char *cmd_list[CMD_LAST] = {
 	[CMD_VER] =	"ver",
 	[CMD_DATE] =	"date",
 	[CMD_DISP] =	"disp",
+	[CMD_RX] =	"rx",
+	[CMD_RXDUMP] =	"rxdump",
 };
 
 void vChatTask(void *vpars)
@@ -127,6 +135,40 @@ void vChatTask(void *vpars)
 					tk[i] = ' ';
 
 			lcd_setstr(l, o, tk);
+
+		} else if (strcmp(tk, cmd_list[CMD_RXDUMP]) == 0) {
+			int i;
+
+			for (i = 0; i < sizeof(rx_buf); i++) {
+				if (!(i % 16)) {
+					sniprintf(s, sizeof(s), "\r\n%04x:", i);
+					cdc_write_buf(&cdc_out, s, strlen(s), 1);
+				}
+				sniprintf(s, sizeof(s), " %02x", rx_buf[i]);
+				cdc_write_buf(&cdc_out, s, strlen(s), 1);
+			}
+			sniprintf(s, sizeof(s), "\r\n");
+		} else if (strcmp(tk, cmd_list[CMD_RX]) == 0) {
+			int r = 0, len = 0, t, tout;
+
+			tk = _strtok(NULL, "\n\r");
+			if (tk)
+				len = atoi(tk);
+
+			cdc_write_buf(&cdc_out, "\r\n", 2, 1);
+
+			t = xTaskGetTickCount();
+			tout = t + RX_TIMEOUT;
+			while (r < len) {
+				int d = cdc_read_buf(&cdc_in, &rx_buf[r % sizeof(rx_buf)], len - r);
+
+				r += d;
+				if (d)
+					tout = xTaskGetTickCount() + RX_TIMEOUT;
+				if (xTaskGetTickCount() > tout)
+					break;
+			}
+			sniprintf(s, sizeof(s), "%d %d\r\n", r, xTaskGetTickCount() - t);
 
 		} else
 			sniprintf(s, sizeof(s), "E: try `help`\r\n");
