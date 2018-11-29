@@ -19,6 +19,7 @@ enum {
 	CMD_DISP,
 	CMD_RX,
 	CMD_RXDUMP,
+	CMD_TX,
 
 	CMD_LAST
 };
@@ -31,6 +32,7 @@ char *cmd_list[CMD_LAST] = {
 	[CMD_DISP] =	"disp",
 	[CMD_RX] =	"rx",
 	[CMD_RXDUMP] =	"rxdump",
+	[CMD_TX] =	"tx",
 };
 
 void vChatTask(void *vpars)
@@ -148,6 +150,23 @@ void vChatTask(void *vpars)
 				cdc_write_buf(&cdc_out, s, strlen(s), 1);
 			}
 			sniprintf(s, sizeof(s), "\r\n");
+		} else if (strcmp(tk, cmd_list[CMD_TX]) == 0) {
+			int i, bs = 1 << 8, n = 0x10, t;
+
+			tk = _strtok(NULL, "\n\r");
+			if (tk)
+				bs = atoi(tk);
+
+			tk = _strtok(NULL, "\n\r");
+			if (tk)
+				n = atoi(tk);
+
+			t = xTaskGetTickCount();
+			for (i = 0; i < n; i++)
+				cdc_write_buf(&cdc_out, &rx_buf[(i * bs) % sizeof(rx_buf)], bs, 1);
+
+			sniprintf(s, sizeof(s), "%d\r\n", xTaskGetTickCount() - t);
+
 		} else if (strcmp(tk, cmd_list[CMD_RX]) == 0) {
 			int r = 0, len = 0, t, tout;
 
