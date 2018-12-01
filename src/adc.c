@@ -95,12 +95,16 @@ int adc_vals[ARRAY_SIZE(chan_list)];
 
 xSemaphoreHandle adc_vals_lock = NULL;
 
+static volatile int chmask = 0;
+
 void adc_init(int chans)
 {
 	int i;
 	uint32_t tmp;
 	GPIO_InitTypeDef sGPIOinit;
 	ADC_InitTypeDef sADCinit;
+
+	chmask = chans & ((1 << ARRAY_SIZE(chan_list)) - 1);
 
 	/* set  adc clock to 72/6=12MHz */
 	RCC_ADCCLKConfig(RCC_PCLK2_Div6);
@@ -141,6 +145,9 @@ void adc_init(int chans)
 
 int adc_get(int i)
 {
+	if (!(chmask & (1 << i)))
+		return -1;
+
 	ADC_ClearFlag(ADC1, ADC_FLAG_EOC);
 	ADC_RegularChannelConfig(ADC1, i, 1, ADC_SampleTime_71Cycles5);
 	ADC_SoftwareStartConvCmd(ADC1, ENABLE);
