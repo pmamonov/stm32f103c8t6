@@ -112,6 +112,8 @@ void adc_init(int chans)
 			tmp |= chan_list[i].rcc;
 	RCC_APB2PeriphClockCmd(tmp, ENABLE);
 
+	ADC_DeInit(ADC1);
+
 	/* configure ADC inputs */
 	sGPIOinit.GPIO_Speed = GPIO_Speed_10MHz;
 	sGPIOinit.GPIO_Mode = GPIO_Mode_AIN;
