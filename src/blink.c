@@ -12,13 +12,6 @@ void blink_init()
 	GPIO_SetBits(SYS_LED_GPIO, SYS_LED_PIN);
 }
 
-void blink_toggle() {
-	if (GPIO_ReadOutputDataBit(SYS_LED_GPIO, SYS_LED_PIN))
-		GPIO_ResetBits(SYS_LED_GPIO, SYS_LED_PIN);
-	else
-		GPIO_SetBits(SYS_LED_GPIO, SYS_LED_PIN);
-}
-
 void vBlinkTask(void *vpars)
 {
 	blink_init();
