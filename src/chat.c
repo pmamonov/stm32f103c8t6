@@ -4,6 +4,7 @@
 #include "strtok.h"
 #include "version.h"
 #include "lcd.h"
+#include "adc.h"
 
 #define PROMPT	"> "
 
@@ -33,6 +34,12 @@ void vChatTask(void *vpars)
 	char *tk;
 	int i = 0;
 	int echo = 1;
+	int adc_emit = 0;
+	void *dbuf = adc_dma_buf();
+	int bp = 0;
+
+	adc_init(1);
+	adc_dma_start();
 
 	while (1) {
 		if (echo)
@@ -42,11 +49,23 @@ void vChatTask(void *vpars)
 
 		while (1) {
 			i = cdc_read_buf(&cdc_in, c, 1);
+
+			if (adc_emit) {
+				int n = adc_dma_bytes_ready();
+				if (bp >= adc_db_sz())
+					bp = 0;
+				if (n < bp)
+					n = adc_db_sz();
+				if (n > bp) {
+					cdc_write_buf(&cdc_out, dbuf + bp, n - bp, 1);
+					bp = n;
+				}
+			}
+
 			if (i) {
 				if (echo)
 					cdc_write_buf(&cdc_out, c, 1, 1);
 			} else {
-				vTaskDelay(10);
 				continue;
 			}
 			if (*c == '\r') {
@@ -128,6 +147,25 @@ void vChatTask(void *vpars)
 
 			lcd_setstr(l, o, tk);
 
+		} else if (strcmp(tk, "xadc") == 0) {
+			int t, j;
+
+			tk = _strtok(NULL, " \n\r");
+			if (!tk) {
+				adc_emit = 0;
+				goto out;
+			}
+
+			adc_emit = strtoul(tk, NULL, 0);
+			if (!adc_emit)
+				goto out;
+			*s = 0;
+
+			bp = 0;
+			adc_dma_ready_clr();
+			t = xTaskGetTickCount();
+			while (!adc_dma_ready() && xTaskGetTickCount() > t + 100)
+				;
 		} else
 			sniprintf(s, sizeof(s), "E: try `help`\r\n");
 out:
