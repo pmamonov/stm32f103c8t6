@@ -1,3 +1,4 @@
+#include "string.h"
 #include "FreeRTOS.h"
 #include "task.h"
 #include "adc.h"
@@ -95,7 +96,10 @@ int adc_vals[ARRAY_SIZE(chan_list)];
 
 xSemaphoreHandle adc_vals_lock = NULL;
 
-static volatile int chmask = 0;
+static volatile int chmask;
+static volatile int dbuf_ready;
+#define BLEN	2048
+uint16_t dbuf[BLEN];
 
 void adc_init(int chans)
 {
@@ -173,3 +177,102 @@ void vADCTask(void* vpars)
 	}
 }
 
+void adc_dma_start()
+{
+	int i, nch = 0;
+	ADC_InitTypeDef sADCinit;
+	DMA_InitTypeDef dma_cfg = {
+		.DMA_PeripheralBaseAddr = (uint32_t)&ADC1->DR,
+		.DMA_MemoryBaseAddr = (uint32_t)dbuf,
+		.DMA_DIR = DMA_DIR_PeripheralSRC,
+		.DMA_BufferSize = sizeof(dbuf) / 2,
+		.DMA_PeripheralInc = DMA_PeripheralInc_Disable,
+		.DMA_MemoryInc = DMA_MemoryInc_Enable,
+		.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord,
+		.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord,
+		.DMA_Mode = DMA_Mode_Circular,
+		.DMA_Priority = DMA_Priority_Medium,
+		.DMA_M2M = DMA_M2M_Disable,
+	};
+	NVIC_InitTypeDef nvic = {
+		.NVIC_IRQChannel = DMA1_Channel1_IRQn,
+		.NVIC_IRQChannelPreemptionPriority = 1,
+		.NVIC_IRQChannelSubPriority = 0,
+		.NVIC_IRQChannelCmd = ENABLE,
+	};
+
+	NVIC_Init(&nvic);
+
+	memset(dbuf, 0xaa, sizeof(dbuf));
+
+	for (i = 0; i < ARRAY_SIZE(chan_list); i++)
+		if (chmask & (1 << i))
+			nch++;
+
+	ADC_Cmd(ADC1, DISABLE);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, DISABLE);
+
+	/* set  adc clock to 72 / 8 = 9MHz */
+	RCC_ADCCLKConfig(RCC_PCLK2_Div8);
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
+
+	/* adc setup */
+	ADC_DeInit(ADC1);
+
+	sADCinit.ADC_Mode = ADC_Mode_Independent;
+	sADCinit.ADC_ScanConvMode = ENABLE;
+	sADCinit.ADC_ContinuousConvMode = ENABLE;
+	sADCinit.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;
+	sADCinit.ADC_DataAlign = ADC_DataAlign_Right;
+	sADCinit.ADC_NbrOfChannel = nch;
+	ADC_Init(ADC1,&sADCinit);
+
+	ADC_Cmd(ADC1, ENABLE);
+
+	for (i = 0; i < ARRAY_SIZE(chan_list); i++)
+		if (chmask & (1 << i))
+			/* 9 MHz / (12.5 + 28.5) = 219512 Hz */
+			ADC_RegularChannelConfig(ADC1, i, 1, ADC_SampleTime_28Cycles5);
+
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
+	DMA_Init(DMA1_Channel1, &dma_cfg);
+	DMA_ITConfig(DMA1_Channel1, DMA_IT_TC, ENABLE);
+	DMA_Cmd(DMA1_Channel1, ENABLE);
+
+	ADC_DMACmd(ADC1, ENABLE);
+	ADC_SoftwareStartConvCmd(ADC1, ENABLE);
+}
+
+void DMA1_Channel1_IRQHandler(void)
+{
+	if (DMA_GetITStatus(DMA1_IT_TC1)) {
+		DMA_ClearITPendingBit(DMA1_IT_TC1);
+		dbuf_ready = 1;
+	}
+	DMA_ClearITPendingBit(DMA1_IT_GL1);
+}
+
+int adc_db_sz()
+{
+	return sizeof(dbuf);
+}
+
+int adc_dma_bytes_ready()
+{
+	return sizeof(dbuf) - 2 * DMA_GetCurrDataCounter(DMA1_Channel1);
+}
+
+void *adc_dma_buf()
+{
+	return dbuf;
+}
+
+void adc_dma_ready_clr()
+{
+	dbuf_ready = 0;
+}
+
+int adc_dma_ready()
+{
+	return dbuf_ready;
+}

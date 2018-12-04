@@ -13,4 +13,11 @@ int adc_get(int);
 int adc_get_stored(int);
 void vADCTask(void* vpars);
 
+void adc_dma_start();
+void *adc_dma_buf();
+int adc_db_sz();
+int adc_dma_bytes_ready();
+int adc_dma_ready();
+void adc_dma_ready_clr();
+
 #endif /* __ADC_H__ */

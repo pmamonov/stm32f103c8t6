@@ -59,6 +59,7 @@ OBJ = src/startup_stm32f10x_md.o \
   STM32_USB-FS-Device_Driver/src/usb_init.o\
   STM32_USB-FS-Device_Driver/src/usb_core.o\
   STM32_USB-FS-Device_Driver/src/usb_sil.o\
+  STM32F10x_StdPeriph_Driver/src/stm32f10x_dma.o \
   CM3/CoreSupport/core_cm3.o
 
 .PHONY: inc/version.h
