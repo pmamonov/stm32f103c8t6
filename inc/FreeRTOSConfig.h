@@ -96,7 +96,7 @@
 #define configCPU_CLOCK_HZ				( 72000000UL )
 #define configMAX_PRIORITIES			( ( unsigned portBASE_TYPE ) 5 )
 #define configMINIMAL_STACK_SIZE		( ( unsigned short ) 64 )
-#define configTOTAL_HEAP_SIZE			( ( size_t ) ( 14 * 1024 ) )
+#define configTOTAL_HEAP_SIZE			( ( size_t ) ( 8 * 1024 ) )
 #define configMAX_TASK_NAME_LEN			( 10 )
 #define configUSE_TRACE_FACILITY		0
 #define configUSE_16_BIT_TICKS			0
