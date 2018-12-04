@@ -46,7 +46,7 @@ int main(void)
 	err = xTaskCreate(vBlinkTask, "blink", 64, NULL,
 			  tskIDLE_PRIORITY + 1, NULL );
 
-	err = xTaskCreate(vChatTask, "chat", 256, NULL,
+	err = xTaskCreate(vChatTask, "chat", 512, NULL,
 			  tskIDLE_PRIORITY + 1, NULL );
 
 	vTaskStartScheduler();
