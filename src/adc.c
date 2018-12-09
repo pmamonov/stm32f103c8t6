@@ -98,8 +98,7 @@ xSemaphoreHandle adc_vals_lock = NULL;
 
 static volatile int chmask;
 static volatile int dbuf_ready;
-#define BLEN	2048
-uint16_t dbuf[BLEN];
+uint16_t dbuf[4096];
 
 void adc_init(int chans)
 {
