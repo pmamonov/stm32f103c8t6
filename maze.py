@@ -75,10 +75,12 @@ class gate(tty):
 		self.s.write("pwm %d %d %d\r" % (i, warmup_ms, duty_cycle))
 		self.pwm_state[i] = 1 if duty_cycle > 0 else 0
 
-	def gpio_poll(self, timeout=0):
+	def gpio_poll(self, block):
+		if not block:
+			return self.gpio_state
 		while 1:
 			s = self.s.readline()
-			if timeout and s == "":
+			if s == "":
 				return self.gpio_state
 			ss = s.split()
 			if ss[0] != "gpio:":
@@ -117,9 +119,7 @@ class msm:
 		print "RFID: id=%s" % self.rfid_id
 
 	def get_state(self, block):
-		if not block:
-			self.gate.s.write("gpio\r")
-		self.gpio_state = self.gate.gpio_poll(1)
+		self.gpio_state = self.gate.gpio_poll(block)
 		self.pwm_state = self.gate.pwm_state
 		rfid_ready = self.rfid_ready
 		if self.rfid_ready:
