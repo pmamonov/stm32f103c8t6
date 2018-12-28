@@ -16,11 +16,19 @@ maze_state_machine = {
 #              "reset T" (T = seconds),
 #              "state TAG"
 #
-	": / < reset":			"state IN; pwm0 0; pwm1 1; pwm2 0; pwm3 0",
-	"IN: 0010_01/ < ...0_01/":	"state READ; pwm0 1; pwm1 1; rfid",
-	"READ: ...._11_R/ < ...._.1/":	"state OUT; pwm0 1; pwm1 0",
-	"OUT: ..00_10/ < ..01_10/":	"state WAIT; pwm0 1; pwm1 1; reset 60",
-	"WAIT: ..1._11/ < ..0._11/":	"state OUT; pwm0 1; pwm1 0; reset 0",
+	": / < reset":			"state ENTER; pwm0 0; pwm1 1; pwm2 0; pwm3 1",
+	"ENTER: .010_01/ < .000_01/":	"state IN; pwm0 1",
+        "IN: 0.1._11/ < 0.0._11":       "state READ; rfid",
+	"READ: ...._11_R/ < ...._.1/":	"state LEAV1; pwm1 0",
+	"LEAV1: ..00_10/ < ..01_10/":	"state OUT1POS",
+	"OUT1POS: ..1._10/ < ..0._10/":	"state LEAV1",
+        "OUT1POS: ...._10/1..._.. < ...._10/0..._..": \
+                                        "state OUT1SURE; pwm1 1",
+        "OUT1SURE: /001._01 < /000._01": "state LEAV2; pwm2 1; pwm3 0",
+        "LEAV2:  /0000_10 < /0001_10":   "state OUT2POS; pwm3 1; reset 60",
+        "OUT2POS: /.1.._11 < /.0.._11":  "state LEAV2; pwm3 0; reset 0",
+        "OUT2POS: /..1._11 < /..0._11":  "state LEAV2; pwm3 0; reset 0",
+        "OUT2POS: /...1_11 < /...1_11":  "state LEAV2; pwm3 0; reset 0",
 }
 
 PWM_WARMUP_MS = 100
