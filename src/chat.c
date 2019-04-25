@@ -4,6 +4,7 @@
 #include "strtok.h"
 #include "version.h"
 #include "lcd.h"
+#include "i2c.h"
 
 #define PROMPT	"> "
 
@@ -13,6 +14,7 @@ enum {
 	CMD_VER,
 	CMD_DATE,
 	CMD_DISP,
+	CMD_I2CDET,
 
 	CMD_LAST
 };
@@ -23,6 +25,7 @@ char *cmd_list[CMD_LAST] = {
 	[CMD_VER] =	"ver",
 	[CMD_DATE] =	"date",
 	[CMD_DISP] =	"disp",
+	[CMD_I2CDET] =	"i2cdetect",
 };
 
 void vChatTask(void *vpars)
@@ -128,6 +131,29 @@ void vChatTask(void *vpars)
 
 			lcd_setstr(l, o, tk);
 
+		} else if (strcmp(tk, cmd_list[CMD_I2CDET]) == 0) {
+			int i = 0, r = 1000, a;
+
+			tk = _strtok(NULL, " \n\r");
+			if (tk)
+				i = atoi(tk);
+
+			tk = _strtok(NULL, " \n\r");
+			if (tk)
+				r = atoi(tk);
+
+			i2c_init(i, r);
+			for (a = 8; a < 0x78; a++) {
+				int rc = i2c_start(i, I2C_TX, a);
+
+				i2c_stop(i);
+
+				if (!rc) {
+					sniprintf(s, sizeof(s), "@ 0x%02x\r\n", a);
+					cdc_write_buf(&cdc_out, s, strlen(s), 1);
+				}
+			}
+			sniprintf(s, sizeof(s), "DONE\r\n");
 		} else
 			sniprintf(s, sizeof(s), "E: try `help`\r\n");
 out:
