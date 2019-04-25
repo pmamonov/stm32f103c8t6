@@ -15,6 +15,7 @@ enum {
 	CMD_DATE,
 	CMD_DISP,
 	CMD_I2CDET,
+	CMD_CO2,
 
 	CMD_LAST
 };
@@ -26,6 +27,7 @@ char *cmd_list[CMD_LAST] = {
 	[CMD_DATE] =	"date",
 	[CMD_DISP] =	"disp",
 	[CMD_I2CDET] =	"i2cdetect",
+	[CMD_CO2] =	"co2",
 };
 
 void vChatTask(void *vpars)
@@ -154,6 +156,24 @@ void vChatTask(void *vpars)
 				}
 			}
 			sniprintf(s, sizeof(s), "DONE\r\n");
+		} else if (strcmp(tk, cmd_list[CMD_CO2]) == 0) {
+			uint8_t cmd[] = {0x04, 0x13, 0x8b, 0x00, 0x01};
+			uint8_t resp[4];
+			int rc;
+
+			rc = i2c_xmit(0, 0x15, cmd, sizeof(cmd));
+			if (rc != sizeof(cmd)) {
+				sniprintf(s, sizeof(s), "E: xmit: %d\r\n", rc);
+				goto out;
+			}
+			rc = i2c_recv(0, 0x15, resp, sizeof(resp));
+			if (rc != sizeof(resp)) {
+				sniprintf(s, sizeof(s), "E: recv: %d\r\n", rc);
+				goto out;
+			}
+			sniprintf(s, sizeof(s), "%02x %02x %x\r\n",
+				resp[0], resp[1], ((unsigned)resp[2] << 16) | resp[3]);
+
 		} else
 			sniprintf(s, sizeof(s), "E: try `help`\r\n");
 out:
