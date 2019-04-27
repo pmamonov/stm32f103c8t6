@@ -28,7 +28,7 @@ struct pwm {
 };
 
 static struct pwm pwm_list[] = {
-/*	[0] = {
+	[0] = {
 		.gpio = GPIOA,
 		.gpio_pin = GPIO_Pin_8,
 		.gpio_rcc = RCC_APB2Periph_GPIOA,
@@ -55,7 +55,7 @@ static struct pwm pwm_list[] = {
 		.tim_rcc = RCC_APB2Periph_TIM1,
 		.tim_rcc_init = RCC_APB2PeriphClockCmd,
 		.init = TIM_OC2Init,
-	}, */
+	},
 };
 
 int pwm_count()

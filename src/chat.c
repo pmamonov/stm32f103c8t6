@@ -42,6 +42,8 @@ void vChatTask(void *vpars)
 	int i = 0;
 	int echo = 1;
 
+	pwm_init_all(2000);
+
 	while (1) {
 		if (echo)
 			cdc_write_buf(&cdc_out, PROMPT, sizeof(PROMPT) - 1, 1);
