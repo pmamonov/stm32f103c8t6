@@ -171,13 +171,15 @@ void vChatTask(void *vpars)
 				sniprintf(s, sizeof(s), "E: xmit: %d\r\n", rc);
 				goto out;
 			}
+			vTaskDelay(100);
+			memset(resp, 0, sizeof(resp));
 			rc = i2c_recv(0, 0x15, resp, sizeof(resp));
 			if (rc != sizeof(resp)) {
 				sniprintf(s, sizeof(s), "E: recv: %d\r\n", rc);
 				goto out;
 			}
-			sniprintf(s, sizeof(s), "%02x %02x %x\r\n",
-				resp[0], resp[1], ((unsigned)resp[2] << 16) | resp[3]);
+			sniprintf(s, sizeof(s), "%02x %02x %d\r\n",
+				resp[0], resp[1], ((unsigned)resp[2] << 8) | resp[3]);
 
 		} else if (strcmp(tk, cmd_list[CMD_PWM]) == 0) {
 			unsigned int c, d, dc;
