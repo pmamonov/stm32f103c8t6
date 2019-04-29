@@ -175,12 +175,23 @@ int i2c_recv(unsigned i, uint8_t addr, uint8_t *data, unsigned len)
 		return rc;
 
 	for (n = 0; n < len; n++) {
-		if (i2c_wait_ev(i, I2C_EVENT_MASTER_BYTE_RECEIVED))
+		if (n + 2 < len && i2c_wait_ev(i, I2C_EVENT_MASTER_BYTE_RECEIVED))
 			return -I2C_ERR_RECV;
+
+		if (n + 3 == len) {
+			I2C_AcknowledgeConfig(cfg->i2c, DISABLE);
+		}
+
 		data[n] = I2C_ReceiveData(cfg->i2c);
+
+		if (n + 3 == len) {
+			if (i2c_wait_ev(i, I2C_EVENT_MASTER_BYTE_RECEIVED))
+				return -(100 + I2C_ERR_RECV);
+			I2C_GenerateSTOP(cfg->i2c, ENABLE);
+			I2C_AcknowledgeConfig(cfg->i2c, ENABLE);
+		}
 	}
 
-	rc = i2c_stop(i);
 	if (rc)
 		return rc;
 
