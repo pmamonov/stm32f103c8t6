@@ -18,6 +18,7 @@ enum {
 	CMD_I2CDET,
 	CMD_CO2,
 	CMD_PWM,
+	CMD_TEMP,
 
 	CMD_LAST
 };
@@ -31,6 +32,7 @@ char *cmd_list[CMD_LAST] = {
 	[CMD_I2CDET] =	"i2cdetect",
 	[CMD_CO2] =	"co2",
 	[CMD_PWM] =	"pwm",
+	[CMD_TEMP] =	"temp",
 };
 
 void vChatTask(void *vpars)
@@ -220,6 +222,31 @@ void vChatTask(void *vpars)
 				vTaskDelay(d);
 			}
 			pwm_set(c, dc);
+		} else if (strcmp(tk, cmd_list[CMD_TEMP]) == 0) {
+			unsigned addr = 0x48;
+			uint8_t resp[4];
+			int rc;
+
+			rc = i2c_xmit(0, addr, "\x03\x80", 2);
+			if (rc <= 0) {
+				sniprintf(s, sizeof(s), "E: xmit 1: %d\r\n", rc);
+				goto out;
+			}
+			rc = i2c_xmit(0, addr, "\x00", 1);
+			if (rc <= 0) {
+				sniprintf(s, sizeof(s), "E: xmit 2: %d\r\n", rc);
+				goto out;
+			}
+			memset(resp, 0, sizeof(resp));
+			rc = i2c_recv(0, addr, resp, 3); /* FIXME: 3 */
+			if (rc <= 0) {
+				sniprintf(s, sizeof(s), "E: recv: %d\r\n", rc);
+				goto out;
+			}
+			rc = ((unsigned)resp[0] << 8) | resp[1];
+			sniprintf(s, sizeof(s), "t: %x %d\r\n",
+				  rc , rc * 1000 / 128);
+
 		} else
 			sniprintf(s, sizeof(s), "E: try `help`\r\n");
 out:
