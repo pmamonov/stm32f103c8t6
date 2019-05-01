@@ -19,6 +19,7 @@ enum {
 	CMD_CO2,
 	CMD_PWM,
 	CMD_TEMP,
+	CMD_HT,
 
 	CMD_LAST
 };
@@ -33,6 +34,7 @@ char *cmd_list[CMD_LAST] = {
 	[CMD_CO2] =	"co2",
 	[CMD_PWM] =	"pwm",
 	[CMD_TEMP] =	"temp",
+	[CMD_HT] =	"ht",
 };
 
 void vChatTask(void *vpars)
@@ -222,6 +224,42 @@ void vChatTask(void *vpars)
 				vTaskDelay(d);
 			}
 			pwm_set(c, dc);
+		} else if (strcmp(tk, cmd_list[CMD_HT]) == 0) {
+			unsigned addr = 0x40;
+			uint8_t resp[4];
+			int rc;
+			long long t, h;
+
+			rc = i2c_xmit(0, addr, "\xe3", 1);
+			if (rc <= 0) {
+				sniprintf(s, sizeof(s), "E: xmit 1: %d\r\n", rc);
+				goto out;
+			}
+			memset(resp, 0, sizeof(resp));
+			rc = i2c_recv(0, addr, resp, 3);
+			if (rc <= 0) {
+				sniprintf(s, sizeof(s), "E: recv 1: %d\r\n", rc);
+				goto out;
+			}
+			t = ((unsigned)resp[0] << 8) | resp[1];
+			sniprintf(s, sizeof(s), "th: 0x%llx %lld\r\n",
+				  t , -46850 + 175720 * t / (1 << 16));
+			cdc_write_buf(&cdc_out, s, strlen(s), 1);
+
+			rc = i2c_xmit(0, addr, "\xe5", 1);
+			if (rc <= 0) {
+				sniprintf(s, sizeof(s), "E: xmit 2: %d\r\n", rc);
+				goto out;
+			}
+			memset(resp, 0, sizeof(resp));
+			rc = i2c_recv(0, addr, resp, 3);
+			if (rc <= 0) {
+				sniprintf(s, sizeof(s), "E: recv 2: %d\r\n", rc);
+				goto out;
+			}
+			h = ((unsigned)resp[0] << 8) | resp[1];
+			sniprintf(s, sizeof(s), "ht: 0x%llx %lld\r\n",
+				  h, -6000 + 125000 * h / (1 << 16));
 		} else if (strcmp(tk, cmd_list[CMD_TEMP]) == 0) {
 			unsigned addr = 0x48;
 			uint8_t resp[4];
