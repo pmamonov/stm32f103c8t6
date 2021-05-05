@@ -31,25 +31,26 @@ void vChatTask(void *vpars)
 	char *tk;
 	int i = 0;
 	int echo = 1;
+	struct chat_rw_funcs *rw = vpars;
 
 	while (1) {
 		if (echo)
-			cdc_write_buf(&cdc_out, PROMPT, sizeof(PROMPT) - 1, 1);
+			rw->write(PROMPT, sizeof(PROMPT) - 1);
 		memset(cmd, 0, sizeof(cmd));
 		c = cmd;
 
 		while (1) {
-			i = cdc_read_buf(&cdc_in, c, 1);
+			i = rw->read(c, 1);
 			if (i) {
 				if (echo)
-					cdc_write_buf(&cdc_out, c, 1, 1);
+					rw->write(c, 1);
 			} else {
 				vTaskDelay(10);
 				continue;
 			}
 			if (*c == '\r') {
 				if (echo)
-					cdc_write_buf(&cdc_out, "\n", 1, 1);
+					rw->write("\n", 1);
 				break;
 			}
 			if (*c == 8) { /* backspace */
@@ -83,8 +84,8 @@ void vChatTask(void *vpars)
 			for (i = 0; i < CMD_LAST; i++) {
 				char *_s = cmd_list[i];
 
-				cdc_write_buf(&cdc_out, _s, strlen(_s), 1);
-				cdc_write_buf(&cdc_out, "\r\n", 2, 1);
+				rw->write(_s, strlen(_s));
+				rw->write("\r\n", 2);
 			}
 
 		} else if (strcmp(tk, cmd_list[CMD_DATE]) == 0) {
@@ -92,7 +93,7 @@ void vChatTask(void *vpars)
 		} else
 			sniprintf(s, sizeof(s), "E: try `help`\r\n");
 out:
-		cdc_write_buf(&cdc_out, s, strlen(s), 1);
+		rw->write(s, strlen(s));
 	}
 }
 

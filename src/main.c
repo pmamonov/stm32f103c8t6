@@ -13,6 +13,11 @@
 #include "lcd.h"
 #include "flash.h"
 
+struct chat_rw_funcs cdc_rw = {
+	.read = cdc_read,
+	.write = cdc_write,
+};
+
 int main(void)
 {
 	portBASE_TYPE err;
@@ -27,7 +32,7 @@ int main(void)
 	err = xTaskCreate(vBlinkTask, "blink", 64, NULL,
 			  tskIDLE_PRIORITY + 1, NULL );
 
-	err = xTaskCreate(vChatTask, "chat", 256, NULL,
+	err = xTaskCreate(vChatTask, "chat", 256, &cdc_rw,
 			  tskIDLE_PRIORITY + 1, NULL );
 
 	vTaskStartScheduler();
