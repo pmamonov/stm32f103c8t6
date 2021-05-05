@@ -28,6 +28,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usb_lib.h"
+#include "stm32f10x_gpio.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -63,6 +64,23 @@ USER_STANDARD_REQUESTS  *pUser_Standard_Requests;
 * Output         : None.
 * Return         : None.
 *******************************************************************************/
+#define USB_DP_PU_RCC	RCC_APB2Periph_GPIOB
+#define USB_DP_PU_GPIO	GPIOB
+#define USB_DP_PU_PIN	GPIO_Pin_9
+
+static void usb_dp_pu()
+{
+	GPIO_InitTypeDef gpio_init = {
+		.GPIO_Speed = GPIO_Speed_10MHz,
+		.GPIO_Mode = GPIO_Mode_Out_PP,
+		.GPIO_Pin = USB_DP_PU_PIN,
+	};
+
+	RCC_APB2PeriphClockCmd(USB_DP_PU_RCC, ENABLE);
+	GPIO_Init(USB_DP_PU_GPIO, &gpio_init);
+	GPIO_WriteBit(USB_DP_PU_GPIO, USB_DP_PU_PIN, Bit_SET);
+}
+
 void USB_Init(void)
 {
   pInformation = &Device_Info;
@@ -71,6 +89,8 @@ void USB_Init(void)
   pUser_Standard_Requests = &User_Standard_Requests;
   /* Initialize devices one by one */
   pProperty->Init();
+
+  usb_dp_pu();
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

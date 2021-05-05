@@ -2,7 +2,6 @@
 #include "usb_lib.h"
 #include "usb_desc.h"
 #include "usb_pwr.h"
-#include "stm32f10x_gpio.h"
 #include "stdlib.h"
 #include "cdcio.h"
 #include "FreeRTOS.h"
@@ -14,23 +13,6 @@
 #include "lcd.h"
 #include "flash.h"
 
-#define USB_DP_PU_RCC	RCC_APB2Periph_GPIOB
-#define USB_DP_PU_GPIO	GPIOB
-#define USB_DP_PU_PIN	GPIO_Pin_9
-
-static void usb_dp_pu()
-{
-	GPIO_InitTypeDef gpio_init = {
-		.GPIO_Speed = GPIO_Speed_10MHz,
-		.GPIO_Mode = GPIO_Mode_Out_PP,
-		.GPIO_Pin = USB_DP_PU_PIN,
-	};
-
-	RCC_APB2PeriphClockCmd(USB_DP_PU_RCC, ENABLE);
-	GPIO_Init(USB_DP_PU_GPIO, &gpio_init);
-	GPIO_WriteBit(USB_DP_PU_GPIO, USB_DP_PU_PIN, Bit_SET);
-}
-
 int main(void)
 {
 	portBASE_TYPE err;
@@ -39,7 +21,6 @@ int main(void)
 	Set_USBClock();
 	USB_Interrupts_Config();
 	USB_Init();
-	usb_dp_pu();
 
 	flash_load();
 
