@@ -23,6 +23,11 @@ uint16_t cdc_write_buf(cdc_buf_t *buf, char *s, uint16_t len, unsigned char bloc
 	return i;
 }
 
+void cdc_write(char *s, unsigned len)
+{
+	cdc_write_buf(&cdc_out, s, len, 1);
+}
+
 uint16_t cdc_read_buf(cdc_buf_t *buf, char *s, uint16_t len)
 {
 	uint16_t i = 0;
@@ -33,6 +38,11 @@ uint16_t cdc_read_buf(cdc_buf_t *buf, char *s, uint16_t len)
 	}
 
 	return i;
+}
+
+unsigned cdc_read(char *s, unsigned len)
+{
+	return cdc_read_buf(&cdc_in, s, len);
 }
 
 uint16_t cdc_gets(char *s, uint16_t len)

@@ -14,7 +14,9 @@ extern cdc_buf_t cdc_in;
 extern cdc_buf_t cdc_out;
 
 uint16_t cdc_write_buf(cdc_buf_t *buf, char *s, uint16_t len, unsigned char block);
+void cdc_write(char *s, unsigned len);
 uint16_t cdc_read_buf(cdc_buf_t *buf, char *s, uint16_t len);
+unsigned cdc_read(char *s, unsigned len);
 
 uint16_t cdc_gets(char *s, uint16_t len);
 #endif /* __CDCIO_H__ */
