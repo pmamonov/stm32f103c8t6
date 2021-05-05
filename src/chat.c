@@ -12,7 +12,6 @@ enum {
 	CMD_ECHO,
 	CMD_VER,
 	CMD_DATE,
-	CMD_DISP,
 
 	CMD_LAST
 };
@@ -22,7 +21,6 @@ char *cmd_list[CMD_LAST] = {
 	[CMD_ECHO] =	"echo",
 	[CMD_VER] =	"ver",
 	[CMD_DATE] =	"date",
-	[CMD_DISP] =	"disp",
 };
 
 void vChatTask(void *vpars)
@@ -91,43 +89,6 @@ void vChatTask(void *vpars)
 
 		} else if (strcmp(tk, cmd_list[CMD_DATE]) == 0) {
 			sniprintf(s, sizeof(s), "%d\r\n", xTaskGetTickCount());
-
-		} else if (strcmp(tk, cmd_list[CMD_DISP]) == 0) {
-			int l, o, i;
-
-			tk = _strtok(NULL, " \n\r");
-			if (!tk) {
-				int l;
-				char *s;
-
-				for (l = 0; l < SL; l++) {
-					s = lcd_getstr(l);
-					cdc_write_buf(&cdc_out, s, strlen(s), 1);
-					cdc_write_buf(&cdc_out, "\n\r", 2, 1);
-				}
-				goto out;
-			}
-			l = atoi(tk);
-
-			tk = _strtok(NULL, " \n\r");
-			if (!tk) {
-				sniprintf(s, sizeof(s), "E: no offset\r\n");
-				goto out;
-			}
-			o = atoi(tk);
-
-			tk = _strtok(NULL, "\n\r");
-			if (!tk) {
-				sniprintf(s, sizeof(s), "E: no string\r\n");
-				goto out;
-			}
-
-			for (i = 0; i < strlen(tk); i++)
-				if (tk[i] == '_')
-					tk[i] = ' ';
-
-			lcd_setstr(l, o, tk);
-
 		} else
 			sniprintf(s, sizeof(s), "E: try `help`\r\n");
 out:
