@@ -9,11 +9,6 @@
 #include "string.h"
 
 
-struct chat_rw_funcs {
-	unsigned (*read)(char *s, unsigned len);
-	void (*write)(char *s, unsigned len);
-};
-
 void vChatTask(void *vpars);
 
 #endif
