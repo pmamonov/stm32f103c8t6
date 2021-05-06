@@ -1,3 +1,4 @@
+#include <common.h>
 #include "hw_config.h"
 #include "usb_lib.h"
 #include "usb_desc.h"
@@ -12,10 +13,51 @@
 #include "chat.h"
 #include "lcd.h"
 #include "flash.h"
+#include "uart.h"
+#include "gpio.h"
+#include <bt.h>
 
-struct chat_rw_funcs cdc_rw = {
-	.read = cdc_read,
-	.write = cdc_write,
+#define BT_DEBUG
+
+int uart2_puts(char *s)
+{
+	return uart_puts(1, s);
+}
+
+int uart2_readline(char *s, unsigned len)
+{
+	return uart_readline(1, s, len);
+}
+
+
+int uart3_puts(char *s)
+{
+#ifdef BT_DEBUG
+	uart2_puts("BT > ");
+	uart2_puts(s);
+#endif
+	return uart_puts(2, s);
+}
+
+int uart3_readline(char *s, unsigned len)
+{
+	int ret = uart_readline(2, s, len);
+#ifdef BT_DEBUG
+	uart2_puts("BT < ");
+	uart2_puts(s);
+#endif
+	return ret;
+}
+
+struct iofun uart3_rw = {
+	.puts = uart3_puts,
+	.readline = uart3_readline,
+};
+
+struct iofun uart2_rw = {
+	.puts = uart2_puts,
+	.readline = uart2_readline,
+	.priv = &uart3_rw,
 };
 
 int main(void)
@@ -23,16 +65,21 @@ int main(void)
 	portBASE_TYPE err;
 	char s[64];
 
-	Set_USBClock();
-	USB_Interrupts_Config();
-	USB_Init();
+	gpio_init();
+
+	uart_init(1, 115200); /* debug */
+
+	uart_init(2, 38400); /* BT */
 
 	flash_load();
 
 	err = xTaskCreate(vBlinkTask, "blink", 64, NULL,
 			  tskIDLE_PRIORITY + 1, NULL );
 
-	err = xTaskCreate(vChatTask, "chat", 256, &cdc_rw,
+	err = xTaskCreate(vChatTask, "chat", 256, &uart2_rw,
+			  tskIDLE_PRIORITY + 1, NULL );
+
+	err = xTaskCreate(vChatTask, "chat-bt", 256, &uart3_rw,
 			  tskIDLE_PRIORITY + 1, NULL );
 
 	vTaskStartScheduler();
