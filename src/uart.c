@@ -237,6 +237,19 @@ int uart_readline(int id, unsigned char *s, int len)
 	return __uart_read(id, s, len, 1, 1);
 }
 
+int uart_flush(int id)
+{
+	struct uart *uart;
+	if (id >= ARRAY_SIZE(uart_list))
+		return -1;
+	uart = &uart_list[id];
+	USART_ITConfig(uart->uart, USART_IT_RXNE, DISABLE);
+	USART_ReceiveData(uart->uart);
+	uart->rx_buf.in = 0;
+	uart->rx_buf.out = 0;
+	USART_ITConfig(uart->uart, USART_IT_RXNE, ENABLE);
+}
+
 static inline void uart_receive(int id)
 {
 	struct uart *uart;

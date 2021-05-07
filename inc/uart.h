@@ -11,5 +11,6 @@ int uart_getc(int id);
 int uart_read(int id, unsigned char *s, int len);
 int uart_read0(int id, unsigned char *s, int len);
 int uart_readline(int id, unsigned char *s, int len);
+int uart_flush(int id);
 
 #endif /*__UART_H__*/
