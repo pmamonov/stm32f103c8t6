@@ -9,16 +9,22 @@
 #define GPIO_POLL_DELAY	100
 
 struct gpio gpios[] = {
-/*
 	[0] = {
 		.port		= GPIOB,
-		.pin		= GPIO_Pin_10,
-		.speed		= GPIO_Speed_10MHz,
+		.pin		= GPIO_Pin_1,
+		.speed		= GPIO_Speed_2MHz,
+		.mode		= GPIO_Mode_IPD,
+		.clk		= RCC_APB2Periph_GPIOB,
+		.clk_cmd	= RCC_APB2PeriphClockCmd,
+	},
+	[1] = {
+		.port		= GPIOB,
+		.pin		= GPIO_Pin_0,
+		.speed		= GPIO_Speed_2MHz,
 		.mode		= GPIO_Mode_Out_PP,
 		.clk		= RCC_APB2Periph_GPIOB,
 		.clk_cmd	= RCC_APB2PeriphClockCmd,
 	},
-*/
 };
 
 static void gpio_init_one(struct gpio *g)
