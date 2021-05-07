@@ -41,6 +41,7 @@ OBJ = src/startup_stm32f10x_md.o \
   src/cdcio.o\
   src/newlib_stubs.o\
   src/strtok.o\
+  src/cbuf.o \
   src/lcd.o i2c_lcd/I2C.o i2c_lcd/LiquidCrystal_I2C.o \
   FreeRTOS/Source/tasks.o\
   FreeRTOS/Source/queue.o\
