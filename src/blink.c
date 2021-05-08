@@ -17,6 +17,6 @@ void vBlinkTask(void *vpars)
 	blink_init();
 	while (1) {
 		blink_toggle();
-		vTaskDelay(200);
+		vTaskDelay(configTICK_RATE_HZ / 2);
 	}
 }
