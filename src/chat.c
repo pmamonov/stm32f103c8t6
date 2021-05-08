@@ -5,6 +5,7 @@
 #include <version.h>
 #include <chat.h>
 #include <bt.h>
+#include <adc.h>
 
 struct cmd {
 	char *name;
@@ -48,6 +49,20 @@ static int cmd_bt_auto(struct iofun *rw)
 	bt_auto(rw); /* executed in BT thread */
 }
 
+static int cmd_adc(struct iofun *rw)
+{
+	char *tk;
+	int i = 0;
+	char s[32];
+
+	tk = _strtok(NULL, ifs);
+	if (tk)
+		i = atoi(tk);
+	sniprintf(s, sizeof(s), "adc %d %d\r\n", i, adc_get(i));
+	rw->puts(s);
+	return 0;
+}
+
 static struct cmd cmd_list[] = {
 	{
 		.name = "ver",
@@ -64,6 +79,10 @@ static struct cmd cmd_list[] = {
 	{
 		.name = "+BTSTATE:1",
 		.func = cmd_bt_auto,
+	},
+	{
+		.name = "adc",
+		.func = cmd_adc,
 	},
 };
 

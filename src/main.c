@@ -71,6 +71,8 @@ int main(void)
 
 	uart_init(2, 38400); /* BT */
 
+	adc_init(1);
+
 	flash_load();
 
 	err = xTaskCreate(vBlinkTask, "blink", 64, NULL,
