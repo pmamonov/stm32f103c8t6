@@ -4,6 +4,7 @@
 #include <common.h>
 #include <version.h>
 #include <chat.h>
+#include <bt.h>
 
 struct cmd {
 	char *name;
@@ -35,6 +36,18 @@ static int test(struct iofun *rw)
 	return 0;
 }
 
+static int cmd_bt_pair(struct iofun *rw)
+{
+	rw->puts("INITIALIZING BT DONGLE\r\n");
+	bt_pair(rw->priv); /* executed in debug thread */
+	rw->puts("PAIR THE DEVICE NOW\r\n");
+}
+
+static int cmd_bt_auto(struct iofun *rw)
+{
+	bt_auto(rw); /* executed in BT thread */
+}
+
 static struct cmd cmd_list[] = {
 	{
 		.name = "ver",
@@ -43,6 +56,14 @@ static struct cmd cmd_list[] = {
 	{
 		.name = "test",
 		.func = test,
+	},
+	{
+		.name = "btp",
+		.func = cmd_bt_pair,
+	},
+	{
+		.name = "+BTSTATE:1",
+		.func = cmd_bt_auto,
 	},
 };
 
