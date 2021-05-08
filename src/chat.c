@@ -63,6 +63,16 @@ static int cmd_adc(struct iofun *rw)
 	return 0;
 }
 
+static int cmd_bat(struct iofun *rw)
+{
+	char s[32];
+
+	sniprintf(s, sizeof(s), "bat %d\r\n", 2 * adc_get_mv(0));
+	rw->puts(s);
+
+	return 0;
+}
+
 static struct cmd cmd_list[] = {
 	{
 		.name = "ver",
@@ -83,6 +93,10 @@ static struct cmd cmd_list[] = {
 	{
 		.name = "adc",
 		.func = cmd_adc,
+	},
+	{
+		.name = "bat",
+		.func = cmd_bat,
 	},
 };
 
