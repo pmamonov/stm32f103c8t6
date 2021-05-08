@@ -8,8 +8,11 @@
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
+#define VREFINT 1210
+
 void adc_init(int);
 int adc_get(int);
+int adc_get_mv(int);
 int adc_get_stored(int);
 void vADCTask(void* vpars);
 

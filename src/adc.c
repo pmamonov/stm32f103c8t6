@@ -95,7 +95,11 @@ int adc_vals[ARRAY_SIZE(chan_list)];
 
 xSemaphoreHandle adc_vals_lock = NULL;
 
-static volatile int chmask = 0;
+/*
+ * CH-16: temperature sensor
+ * CH-17: Vrefint
+*/
+static volatile int chmask = 0x30000;
 
 void adc_init(int chans)
 {
@@ -104,7 +108,8 @@ void adc_init(int chans)
 	GPIO_InitTypeDef sGPIOinit;
 	ADC_InitTypeDef sADCinit;
 
-	chmask = chans & ((1 << ARRAY_SIZE(chan_list)) - 1);
+	chmask &= ~((1 << ARRAY_SIZE(chan_list)) - 1);
+	chmask |= chans & ((1 << ARRAY_SIZE(chan_list)) - 1);
 
 	/* set  adc clock to 72/6=12MHz */
 	RCC_ADCCLKConfig(RCC_PCLK2_Div6);
@@ -150,10 +155,19 @@ int adc_get(int i)
 
 	ADC_ClearFlag(ADC1, ADC_FLAG_EOC);
 	ADC_RegularChannelConfig(ADC1, i, 1, ADC_SampleTime_71Cycles5);
+	if (i > 15)
+		ADC_TempSensorVrefintCmd(ENABLE);
 	ADC_SoftwareStartConvCmd(ADC1, ENABLE);
 	while (!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC))
 		;
+	if (i > 15)
+		ADC_SoftwareStartConvCmd(ADC1, DISABLE);
 	return ADC_GetConversionValue(ADC1);
+}
+
+int adc_get_mv(int i)
+{
+	return VREFINT * adc_get(i) / adc_get(17);
 }
 
 int adc_get_stored(int i)
