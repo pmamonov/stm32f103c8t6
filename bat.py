@@ -15,4 +15,4 @@ with Serial(TTY, baudrate = BAUDRATE) as s, open(LOG, "a") as f:
 		f.write("%d %d\n" % (time(), v))
 		f.flush()
 		print("%s\t%.3f" % (strftime("%Y-%m-%d %H:%M:%S"), 1e-3 * v))
-		sleep(60)
+		sleep(120)
