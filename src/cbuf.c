@@ -1,4 +1,5 @@
 #include <string.h>
+#include <FreeRTOS.h>
 #include <cbuf.h>
 
 unsigned cbuf_write(struct cbuf *buf, char *s, unsigned len, int block)
@@ -12,6 +13,8 @@ unsigned cbuf_write(struct cbuf *buf, char *s, unsigned len, int block)
 			buf->buf[buf->in] = s[i++];
 			buf->in = (buf->in + 1) % buf->len;
 		}
+		if (block && i < len)
+			vTaskDelay(10);
 	} while (block && i < len);
 
 	return i;
@@ -26,6 +29,8 @@ unsigned cbuf_read(struct cbuf *buf, char *s, unsigned len, int block)
 			s[i++] = buf->buf[buf->out];
 			buf->out = (buf->out + 1) % buf->len;
 		}
+		if (block && i < len)
+			vTaskDelay(10);
 	} while (block && i < len);
 
 	return i;
