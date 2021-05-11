@@ -14,9 +14,17 @@ void blink_init()
 
 void vBlinkTask(void *vpars)
 {
+	int i = 0;
+
 	blink_init();
+
 	while (1) {
-		blink_toggle();
-		vTaskDelay(configTICK_RATE_HZ / 2);
+		if (++i % 2) {
+			blink_on();
+			vTaskDelay(configTICK_RATE_HZ / 20);
+		} else {
+			blink_off();
+			vTaskDelay(19 * configTICK_RATE_HZ / 20);
+		}
 	}
 }
